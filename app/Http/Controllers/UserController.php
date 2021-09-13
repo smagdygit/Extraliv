@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\MessageRead;
+use App\Models\Message;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,6 +16,13 @@ class UserController extends Controller
         $userList = array();
         foreach (User::orderBy('name', 'asc')->get() as $userItem) {
             $userItem->messages;
+            $userItem->messagesReadIds;
+            $userItem->messagesReadArray;
+            $array = [];
+            forEach (MessageRead::all() as $item) {
+                array_push($array, $item->id);
+            }
+            $userItem->test = Message::whereIn('id', $array)->get();
             array_push($userList, $userItem);
         }
         return $userList;

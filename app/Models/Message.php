@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Client;
+use App\Models\MessageRead;
 
 class Message extends Model
 {
@@ -25,5 +26,15 @@ class Message extends Model
     public function client()
     {
         return $this->belongsTo(Client::class);
+    }
+
+    public function readBy()
+    {
+        return $this->belongsToMany(User::class, 'message_reads');
+    }
+
+    public function author()
+    {
+        return $this->belongsTo(User::class);
     }
 }

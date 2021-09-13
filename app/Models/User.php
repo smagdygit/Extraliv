@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Message;
+use App\Models\MessageRead;
 
 use Laravel\Passport\HasApiTokens;
 
@@ -54,5 +55,15 @@ class User extends Authenticatable
     public function messages()
     {
         return $this->hasMany(Message::class);
+    }
+
+    public function messagesReadIds()
+    {
+        return $this->hasMany(MessageRead::class);
+    }
+
+    public function messagesReadArray()
+    {
+        return $this->belongsToMany(Message::class, 'message_reads');
     }
 }

@@ -40,9 +40,9 @@ class PassportAuthController extends Controller
  
         if (auth()->attempt($data)) {
             $token = auth()->user()->createToken('LaravelAuthApp')->accessToken;
-            return response()->json(['token' => $token], 200);
+            return response()->json(['status' => 'success', 'token' => 'Bearer ' . $token, 'user' => auth()->user()], 200);
         } else {
-            return response()->json(['error' => 'Unauthorised'], 401);
+            return response()->json(['status' => 'bad-data', 'id' => 'login-incorrect', 'text' => 'The password is wrong or the account does not exist.'], 200);
         }
     }   
 }

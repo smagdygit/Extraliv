@@ -12,6 +12,7 @@ import 'semantic-ui-css/semantic.min.css';
 import './App.css';
 
 function App() {
+    const userObject = JSON.parse(localStorage.getItem('user'));
 
     document.body.style = 'background: #EEFBFF;';
 
@@ -26,7 +27,7 @@ function App() {
                                     <Icon name="bell" size="large" />
                                 </Grid.Column>
                                 <Grid.Column width={12}>
-                                    <h3>Extraliv - Monika Sahlin</h3>
+                                    <h3>Extraliv - {(userObject) ? userObject.name : 'Ej Inloggad'}</h3>
                                 </Grid.Column>
                                 <Grid.Column width={2} textAlign="center">
                                     <Icon name="log out" size="large" />

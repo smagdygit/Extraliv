@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Client;
 
@@ -11,8 +12,22 @@ class ClientController extends Controller
     {
         $clientList = array();
         foreach (Client::orderBy('name', 'asc')->get() as $clientItem) {
-            $clientItem->messages;
+            $clientMessages = $clientItem->messages;
+            foreach ($clientMessages as $message) {
+                $message->readBy;
+                $message->user;
+            }
             array_push($clientList, $clientItem);
+        }
+        foreach ($clientList as $clientItem) {
+            
+            foreach ($clientItem->messages as $message) {
+                $message->read = false;
+                foreach ($message->readBy as $readBy) {
+                    $message->read = ($readBy->id === Auth::user()->id);
+                }
+            }
+            
         }
         return $clientList;
     }

@@ -1,7 +1,7 @@
 import { indexOf } from 'lodash';
 import React, { useState, useEffect, useContext } from 'react';
-import { useHistory, withRouter } from 'react-router-dom';
-import { Button, Form, Grid, Header, Image, Message, Segment, Input, Select, Divider, Modal, Icon } from 'semantic-ui-react';
+import { useHistory, withRouter, Link } from 'react-router-dom';
+import { Button, Form, Grid, Header, Image, Message, Segment, Input, Select, Divider, Modal, Icon, Loader } from 'semantic-ui-react';
 
 const optionsCity = [
 	{ key: 'east', value: 'east', text: 'Östra' },
@@ -17,14 +17,19 @@ function Clients() {
 	const [filteredClients, setFilteredClients] = useState([]);
 	const [filterText, setFilterText] = useState('');
 	const [filterCity, setFilterCity] = useState('');
-	const [expanded, setExpanded] = useState(1);
+	const [expanded, setExpanded] = useState(0);
 	const [newHandover, setNewHandover] = useState(false);
 	const [handoverText, setHandoverText] = useState('');
+	const userObject = JSON.parse(localStorage.getItem('user'));
 
 
 	useEffect(() => {
 		fetch('/api/clients/all', {
 			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': userObject.token,
+			},
 		})
 			.then(response => response.json())
 			.then(data => {
@@ -110,54 +115,14 @@ function Clients() {
 		);
 	}
 
-	function modal(item) {
-		return (
-			<Modal
-				onClose={() => setNewHandover(false)}
-				open={newHandover}
-				trigger={<Button>Show Modal</Button>}
-			>
-				<Modal.Header>Ny Överlämning</Modal.Header>
-				<Modal.Content image>
-					<Modal.Description>
-						<Header>Meddelande</Header>
-						<Form>
-							<Form.TextArea
-								placeholder="Skriv vad nästa person behöver veta..."
-								value={handoverText}
-								onChange={(e) => setHandoverText(e.target.value)}
-							/>
-						</Form>
-					</Modal.Description>
-				</Modal.Content>
-				<Modal.Actions>
-					<Button color='red' onClick={() => setNewHandover(false)}>
-						Avbryt
-					</Button>
-					<Button
-						content="Skicka in"
-						labelPosition='right'
-						icon='checkmark'
-						onClick={() => setNewHandover(false)}
-						positive
-					/>
-				</Modal.Actions>
-			</Modal>
-		);
-	}
-
 	const resultHTML = filteredClients.map((item, index) => {
-		if (expanded === item.id) return (
-			<Segment className="m-3 text-left" key={`clientResults${index}`}>
-				<h3>{item.name}</h3>
-				{newHandover ? modal(item) : expandedHTML(item)}
-				<p>{item.east ? 'Östra' : item.lundby ? 'Lundby' : item.angered ? 'Angered' : item.vh ? 'Västra Hisingen' : item.backa ? 'Backa' : 'Vet Ej'} - {item.messages.length} {item.messages.length === 1 ? 'ny överlämning' : 'nya överlämningar'} </p>
-			</Segment>
-		); else return (
-			<Segment className="m-3 text-left" key={`clientResults${index}`} onClick={() => setExpanded(item.id)}>
-				<h3>{item.name}</h3>
-				<p>{item.east ? 'Östra' : item.lundby ? 'Lundby' : item.angered ? 'Angered' : item.vh ? 'Västra Hisingen' : item.backa ? 'Backa' : 'Vet Ej'} - {item.messages.length} {item.messages.length === 1 ? 'ny överlämning' : 'nya överlämningar'} </p>
-			</Segment>
+		return (
+			<Link to={`./kund/${item.id}`} key={`clientResults${index}`}>
+				<Segment className="m-3 text-left" onClick={() => { }/*setExpanded(item.id)*/}>
+					<h3>{item.name}</h3>
+					<p>{item.east ? 'Östra' : item.lundby ? 'Lundby' : item.angered ? 'Angered' : item.vh ? 'Västra Hisingen' : item.backa ? 'Backa' : 'Vet Ej'} - {item.messages.length} {item.messages.length === 1 ? 'ny överlämning' : 'nya överlämningar'} </p>
+				</Segment>
+			</Link>
 		);
 	});
 
@@ -181,8 +146,17 @@ function Clients() {
 
 				/>
 			</Segment>
-			{resultHTML}
-			<p>1 Resultat</p>
+			{resultHTML.length > 0 &&
+				<>
+					{resultHTML}
+					<p>{resultHTML.length} Resultat</p>
+				</>
+			}
+			{resultHTML.length === 0 &&
+				<Segment style={{ marginTop: '15%' }} basic>
+					<Loader active size='big'>Laddar</Loader>
+				</Segment>
+			}
 		</center>
 	);
 }

@@ -37,7 +37,16 @@ Route::post('clients/create', [ClientController::class, 'create']);
 Route::put('clients/update', [ClientController::class, 'update']);
 Route::delete('clients/delete', [ClientController::class, 'delete']);
 
-Route::post('messages/create', [MessageController::class, 'create']);
+
+
+
+Route::middleware('auth:api')->group(function () {
+    Route::get('clients/all', [ClientController::class, 'getAll']);
+
+    Route::post('messages/create', [MessageController::class, 'create']);
+    Route::post('messages/read', [MessageController::class, 'read']);
+});
+
 
 Route::middleware('auth:api')->group(function () {
     Route::resource('posts', PostController::class);

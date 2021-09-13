@@ -32,11 +32,10 @@ const Login = function () {
 					if (result.status === "success") {
 						setIsLoading(false);
 						result.user.token = result.token;
-						setUser(result.user);
 						localStorage.setItem('user', JSON.stringify(result.user));
 						localStorage.setItem('token', result.user.token);
 						//history.push('/data/employees/view');
-						window.location.pathname = '/data/dashboard';
+						window.location.pathname = '/kunder';
 
 					} else {
 						setErrorText(result.text);
