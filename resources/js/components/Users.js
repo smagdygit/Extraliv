@@ -1,7 +1,7 @@
 import { indexOf } from 'lodash';
 import React, { useState, useEffect, useContext } from 'react';
 import { useHistory, withRouter } from 'react-router-dom';
-import { Button, Form, Grid, Header, Image, Message, Segment, Input, Select, Divider, Modal, Icon, Loader, Checkbox, Textarea, Dimmer } from 'semantic-ui-react';
+import { Button, Form, Grid, Header, Image, Message, Segment, Input, Select, Divider, Modal, Icon, Loader, Checkbox, Dimmer } from 'semantic-ui-react';
 
 const optionsCity = [
 	{ key: 'east', value: 'east', text: 'Östra' },
@@ -9,11 +9,6 @@ const optionsCity = [
 	{ key: 'angered', value: 'angered', text: 'Angered' },
 	{ key: 'vh', value: 'vh', text: 'Västra Hisingen' },
 	{ key: 'backa', value: 'backa', text: 'Backa' },
-]
-
-const optionsCare = [
-	{ key: 'old', value: 'old', text: 'Äldreomsorg' },
-	{ key: 'young', value: 'young', text: 'Funktionshinder' },
 ]
 
 function Clients() {
@@ -25,30 +20,27 @@ function Clients() {
 	const [expanded, setExpanded] = useState(0);
 	const [newHandover, setNewHandover] = useState(false);
 	const [handoverText, setHandoverText] = useState('');
-	const [newClientName, setNewClientName] = useState('');
-	const [newClientNameError, setNewClientNameError] = useState(false);
-	const [newClientMail, setNewClientMail] = useState('');
-	const [newClientMailError, setNewClientMailError] = useState(false);
-	const [newClientPass, setNewClientPass] = useState('');
-	const [newClientPassError, setNewClientPassError] = useState(false);
-	const [newClientAdmin, setNewClientAdmin] = useState(false);
-	const [newClientCity, setNewClientCity] = useState('null');
-	const [newClientCityError, setNewClientCityError] = useState(false);
-	const [newClientCare, setNewClientCare] = useState('null');
-	const [newClientCareError, setNewClientCareError] = useState(false);
-	const [newClientComment, setNewClientComment] = useState('');
-	const [newClientSending, setNewClientSending] = useState(false);
+	const [newUserName, setNewUserName] = useState('');
+	const [newUserNameError, setNewUserNameError] = useState(false);
+	const [newUserMail, setNewUserMail] = useState('');
+	const [newUserMailError, setNewUserMailError] = useState(false);
+	const [newUserPass, setNewUserPass] = useState('');
+	const [newUserPassError, setNewUserPassError] = useState(false);
+	const [newUserAdmin, setNewUserAdmin] = useState(false);
+	const [newUserCity, setNewUserCity] = useState("null");
+	const [newUserCityError, setNewUserCityError] = useState(false);
+	const [newUserSending, setNewUserSending] = useState(false);
 	const userObject = JSON.parse(localStorage.getItem('user'));
 
 
 	useEffect(() => {
 		setFetchedClients([]);
 		setFilteredClients([]);
-		fetchClients();
+		fetchUsers();
 	}, []);
 
-	function fetchClients() {
-		fetch('/api/clients/all', {
+	function fetchUsers() {
+		fetch('/api/users/all', {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -62,60 +54,66 @@ function Clients() {
 			});
 	}
 
-	function sendNewClient() {
-
+	function sendNewUser() {
 		/* CLEAR LAST VALIDATION */
-		setNewClientNameError(false);
-		setNewClientCareError(false);
-		setNewClientCityError(false);
+		setNewUserNameError(false);
+		setNewUserMailError(false);
+		setNewUserPassError(false);
+		setNewUserCityError(false);
 
 		/* VALIDATE */
 		let errors = false;
 
-		if (newClientName.length < 4) {
+		if (newUserName.length < 4) {
 			errors = true;
-			setNewClientNameError(true);
+			setNewUserNameError(true);
 		}
 
-		if (newClientCare === 'null' || newClientCare === null) {
+		if (newUserMail.length < 4) {
 			errors = true;
-			setNewClientCareError(true);
+			setNewUserMailError(true);
 		}
 
-		if (newClientCity === 'null' || newClientCity === null) {
+		if (newUserPass.length < 4) {
 			errors = true;
-			setNewClientCityError(true);
+			setNewUserPassError(true);
+		}
+
+		if (newUserCity === 'null' || newUserCity === null) {
+			errors = true;
+			setNewUserCityError(true);
 		}
 
 		/* PROCEED IF NO ERRORS */
 		if (!errors) {
 
-			setNewClientSending(true);
-
 			/* POST */
-			fetch('/api/clients/create', {
+			setNewUserSending(true);
+			fetch('/api/users/create', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 					'Authorization': userObject.token,
 				},
 				body: JSON.stringify({
-					name: newClientName,
-					care_type: newClientCare,
-					east: newClientCity === 'east' ? 1 : 0,
-					lundby: newClientCity === 'lundby' ? 1 : 0,
-					angered: newClientCity === 'angered' ? 1 : 0,
-					vh: newClientCity === 'vh' ? 1 : 0,
-					backa: newClientCity === 'backa' ? 1 : 0,
-					comment: newClientComment,
+					name: newUserName,
+					email: newUserMail,
+					password: newUserPass,
+					admin: newUserAdmin ? 1 : 0,
+					east: newUserCity === 'east' ? 1 : 0,
+					lundby: newUserCity === 'lundby' ? 1 : 0,
+					angered: newUserCity === 'angered' ? 1 : 0,
+					vh: newUserCity === 'vh' ? 1 : 0,
+					backa: newUserCity === 'backa' ? 1 : 0,
+					comment: '',
 				}),
 			})
 				.then(response => response.json())
 				.then(data => {
-					setNewClientSending(false);
+					setNewUserSending(false);
 					setFetchedClients([]);
 					setFilteredClients([]);
-					fetchClients();
+					fetchUsers();
 				});
 		}
 	}
@@ -199,11 +197,10 @@ function Clients() {
 	}
 
 	const resultHTML = filteredClients.map((item, index) => {
-
 		return (
-			<Segment className="m-3 text-left" key={`clientResults${index}`} onClick={() => { handleClientClick(item.id) }/*setExpanded(item.id)*/}>
+			<Segment className="m-3 text-left" key={`userResults${index}`}>
 				<h3>{item.name}</h3>
-				<p>{item.east ? 'Östra' : item.lundby ? 'Lundby' : item.angered ? 'Angered' : item.vh ? 'Västra Hisingen' : item.backa ? 'Backa' : 'Vet Ej'} - {item.messages.length} {item.messages.length === 1 ? 'ny överlämning' : 'nya överlämningar'} </p>
+				<p>{item.east ? 'Östra - ' : item.lundby ? 'Lundby - ' : item.angered ? 'Angered - ' : item.vh ? 'Västra Hisingen - ' : item.backa ? 'Backa - ' : ''}{item.admin ? 'Admin' : 'Personal'} </p>
 			</Segment>
 		);
 	});
@@ -222,37 +219,49 @@ function Clients() {
 					icon='address book'
 					iconPosition='left'
 					placeholder='Fullt Namn'
-					error={newClientNameError}
-					value={newClientName}
-					onChange={(e) => setNewClientName(e.target.value)}
+					error={newUserNameError}
+					value={newUserName}
+					onChange={(e) => setNewUserName(e.target.value)}
+				/>
+				<Input
+					className="mb-3"
+					fluid
+					icon='mail'
+					iconPosition='left'
+					placeholder='Mejl'
+					error={newUserMailError}
+					value={newUserMail}
+					onChange={(e) => setNewUserMail(e.target.value)}
+				/>
+				<Input
+					type='password'
+					className="mb-3"
+					fluid
+					icon='hide'
+					iconPosition='left'
+					placeholder='Lösenord'
+					error={newUserPassError}
+					value={newUserPass}
+					onChange={(e) => setNewUserPass(e.target.value)}
 				/>
 				<Select
 					className="mb-3"
 					fluid
 					placeholder='Välj stadsdel'
-					error={newClientCityError}
+					error={newUserCityError}
 					options={optionsCity}
 					defaultValue={"null"}
-					onChange={(e, val) => setNewClientCity(val.value)}
+					onChange={(e, val) => setNewUserCity(val.value)}
 				/>
-				<Select
+				<Checkbox
 					className="mb-3"
-					fluid
-					placeholder='Äldreomsorg / Funktionshinder'
-					error={newClientCareError}
-					options={optionsCare}
-					defaultValue={"null"}
-					onChange={(e, val) => setNewClientCare(val.value)}
+					toggle
+					label="Admin"
+					name="Admin"
+					checked={newUserAdmin}
+					onChange={(e) => setNewUserAdmin(!newUserAdmin)}
 				/>
-				<Form>
-					<Form.TextArea
-						className="mb-3"
-						placeholder="Admin-only information relaterat till kund"
-						value={newClientComment}
-						onChange={(e) => setNewClientComment(e.target.value)}
-					/>
-				</Form>
-				<Button fluid color="green" onClick={sendNewClient}>Lägg till användare</Button>
+				<Button fluid color="green" onClick={sendNewUser}>Lägg till användare</Button>
 			</Segment>
 			<Segment className="m-3">
 				<Input
@@ -262,13 +271,6 @@ function Clients() {
 					placeholder='Sök På Namn'
 					value={filterText}
 					onChange={(e) => handleText(e)}
-				/>
-				<h4 className="m-3">Eller Stadsdel</h4>
-				<Select
-					fluid
-					placeholder='Välj stadsdel'
-					options={optionsCity}
-
 				/>
 			</Segment>
 			{resultHTML.length > 0 &&

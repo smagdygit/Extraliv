@@ -7,6 +7,7 @@ import { createBrowserHistory } from 'history';
 import Login from './Login';
 import Clients from './Clients';
 import Client from './Client';
+import Users from './Users';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'semantic-ui-css/semantic.min.css';
 import './App.css';
@@ -42,7 +43,8 @@ function App() {
                         <Route path="/" component={Login} exact />
                         <Route path="/undefined" component={Login} exact />
                         <Route path="/kunder" component={Clients} exact />
-                        <Route path="/kund" component={Client} exact />
+                        <Route path="/kund/:id" component={Client} exact />
+                        <Route path="/users" component={Users} exact />
                     </Switch>
                 </div>
             </>

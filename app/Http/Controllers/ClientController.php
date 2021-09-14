@@ -12,6 +12,14 @@ class ClientController extends Controller
     {
         $clientList = array();
         foreach (Client::orderBy('name', 'asc')->get() as $clientItem) {
+
+            /* Convert '1' to 1, vice versa */
+            $clientItem->east = $clientItem->east === '1' ? 1 : 0;
+            $clientItem->lundby = $clientItem->lundby === '1' ? 1 : 0;
+            $clientItem->angered = $clientItem->angered === '1' ? 1 : 0;
+            $clientItem->vh = $clientItem->vh === '1' ? 1 : 0;
+            $clientItem->backa = $clientItem->backa === '1' ? 1 : 0;
+
             $clientMessages = $clientItem->messages;
             foreach ($clientMessages as $message) {
                 $message->readBy;
@@ -59,7 +67,7 @@ class ClientController extends Controller
             'comment' => $request->comment ?: '',
         ]);
 
-        return ['status' => 'success', 'clients' => $this->getAll()];
+        return ['status' => 'success'];
     }
 
     public function update(Request $request)

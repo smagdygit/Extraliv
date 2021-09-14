@@ -1,7 +1,7 @@
 import { indexOf } from 'lodash';
 import React, { useState, useEffect, useContext } from 'react';
-import { useHistory, withRouter, Link } from 'react-router-dom';
-import { Button, Form, Grid, Header, Image, Message, Segment, Input, Select, Icon, Loader, Dimmer, Divider, Modal } from 'semantic-ui-react';
+import { useHistory, withRouter, Link, useParams } from 'react-router-dom';
+import { Button, Form, Grid, Header, Image, Message, Segment, Input, Select, Icon, Loader, Dimmer, Divider, Modal, Checkbox } from 'semantic-ui-react';
 
 const optionsCity = [
 	{ key: 'east', value: 'east', text: 'Östra' },
@@ -18,9 +18,10 @@ function Clients() {
 	const [filterText, setFilterText] = useState('');
 	const [filterCity, setFilterCity] = useState('');
 	const [expanded, setExpanded] = useState(0);
-	const [clientId, setClientId] = useState(1);
+	const [clientId, setClientId] = useState(parseInt(useParams().id));
 	const [newHandover, setNewHandover] = useState(false);
 	const [handoverText, setHandoverText] = useState('');
+	const [handoverClean, setHandoverClean] = useState(false);
 	const [handoverLoading, setHandoverLoading] = useState(false);
 	const [animateRemoval, setAnimateRemoval] = useState({ id: -1, ms: 0, timer: null });
 	const userObject = JSON.parse(localStorage.getItem('user'));
@@ -46,8 +47,9 @@ function Clients() {
 				returnFunc();
 			});
 	}
+
 	useEffect(() => {
-		fetchClients(() => {});
+		fetchClients(() => { });
 	}, []);
 
 	function handleMarkAsRead(id) {
@@ -72,11 +74,10 @@ function Clients() {
 	}
 
 	function goBack() {
-		history.push('./kunder');
+		history.push('../kunder');
 	}
 
 	function sendNewHandover() {
-		console.log(1)
 		setHandoverLoading(true);
 		fetch('/api/messages/create', {
 			method: 'POST',
@@ -86,7 +87,7 @@ function Clients() {
 			},
 			body: JSON.stringify({
 				client_id: clientId,
-				content: handoverText,
+				content: handoverClean ? 'OK!' : handoverText,
 			}),
 		})
 			.then(response => response.json())
@@ -110,15 +111,27 @@ function Clients() {
 				<Modal.Header>Ny Överlämning</Modal.Header>
 				<Modal.Content image>
 					<Modal.Description>
-						<Header>Meddelande</Header>
-						<Form>
-							<Form.TextArea
-								placeholder="Skriv vad nästa person behöver veta..."
-								value={handoverText}
-								onChange={(e) => setHandoverText(e.target.value)}
-							/>
-						</Form>
+						{!handoverClean &&
+							<>
+								<Header>Meddelande</Header>
+								<Form>
+									<Form.TextArea
+										placeholder="Skriv vad nästa person behöver veta..."
+										value={handoverText}
+										onChange={(e) => setHandoverText(e.target.value)}
+									/>
+								</Form>
+							</>
+						}
 					</Modal.Description>
+					<Checkbox
+						className="mb-3"
+						toggle
+						label="Inget att Rapportera - Allt OK"
+						name="inget"
+						checked={handoverClean}
+						onChange={(e) => setHandoverClean(!handoverClean)}
+					/>
 				</Modal.Content>
 				<Modal.Actions>
 					<Button color='red' onClick={() => setNewHandover(false)}>
@@ -181,6 +194,11 @@ function Clients() {
 					<Grid.Row className="m-0 pt-5 pb-5">
 						<Grid.Column>
 							<p style={{ fontSize: '1.2rem' }}>{item.content}</p>
+						</Grid.Column>
+					</Grid.Row>
+					<Grid.Row className="m-0 p-0">
+						<Grid.Column textAlign="left">
+							<p>Read by: {item.read_by.map((item) => {return(item.name)}).join(', ')}</p>
 						</Grid.Column>
 					</Grid.Row>
 				</Grid>
