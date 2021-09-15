@@ -209,7 +209,7 @@ function Clients() {
 	return (
 		<center>
 			<Segment className="m-3">
-				<Dimmer active={newClientSending}>
+				<Dimmer active={newUserSending}>
 					<Loader content="Lägger till kund..." />
 				</Dimmer>
 				<h4>Skapa ny användare</h4>

@@ -46,4 +46,42 @@ class MessageController extends Controller
             return ['status' => 'error', 'text' => 'Meddelandet finns ej'];
         }
     }
+
+    public function handled(Request $request)
+    {
+        $userId = Auth::user()->id;
+        if (Auth::user()->admin == true) {
+            $id = $request->id;
+            if (Message::where('id', $id)->exists()) {
+
+                Message::where('id', $id)->update([
+                    'handled' => true
+                ]);
+
+                return ['status' => 'success'];
+            } else {
+                return ['status' => 'error', 'text' => 'Meddelandet finns ej'];
+            }
+        } else {
+            return ['status' => 'error', 'text' => 'Du har ej behörighet för att utföra detta'];
+        }
+    }
+
+    public function delete(Request $request)
+    {
+        $userId = Auth::user()->id;
+        if (Auth::user()->admin == true) {
+            $id = $request->id;
+            if (Message::where('id', $id)->exists()) {
+                
+                Message::where('id', $id)->delete();
+
+                return ['status' => 'success'];
+            } else {
+                return ['status' => 'error', 'text' => 'Meddelandet finns ej'];
+            }
+        } else {
+            return ['status' => 'error', 'text' => 'Du har ej behörighet för att utföra detta'];
+        }
+    }
 }

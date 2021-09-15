@@ -128,13 +128,24 @@ function Clients() {
 	}
 
 	function handleText(e) {
-		setFilterCity('');
+		setFilterCity(null);
 		setFilterText(e.target.value);
 		setExpanded(0);
 		setNewHandover(false);
 
 		const filtered = fetchedClients.filter((item) => {
 			return (item.name.toLowerCase().indexOf(e.target.value.toLowerCase()) !== -1);
+		});
+
+		setFilteredClients(filtered);
+	}
+
+	function handleCity(value) {
+		setFilterText('');
+		setFilterCity(value);
+
+		const filtered = fetchedClients.filter((item) => {
+			return (item.east && value === 'east' ? true : item.lundby && value === 'lundby' ? true : item.angered && value === 'angered' ? true : item.vh && value === 'vh' ? true : item.backa && value === 'backa' ? true : false);
 		});
 
 		setFilteredClients(filtered);
@@ -215,7 +226,7 @@ function Clients() {
 				<Dimmer active={newClientSending}>
 					<Loader content="Lägger till kund..." />
 				</Dimmer>
-				<h4>Skapa ny användare</h4>
+				<h4>Skapa ny kund</h4>
 				<Input
 					className="mb-3"
 					fluid
@@ -252,7 +263,7 @@ function Clients() {
 						onChange={(e) => setNewClientComment(e.target.value)}
 					/>
 				</Form>
-				<Button fluid color="green" onClick={sendNewClient}>Lägg till användare</Button>
+				<Button fluid color="green" onClick={sendNewClient}>Lägg till kund</Button>
 			</Segment>
 			<Segment className="m-3">
 				<Input
@@ -268,7 +279,7 @@ function Clients() {
 					fluid
 					placeholder='Välj stadsdel'
 					options={optionsCity}
-
+					onChange={(e, val) => handleCity(val.value)}
 				/>
 			</Segment>
 			{resultHTML.length > 0 &&

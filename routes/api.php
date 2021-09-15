@@ -27,24 +27,28 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('register', [PassportAuthController::class, 'register']);
 Route::post('login', [PassportAuthController::class, 'login']);
 
-Route::get('users/all', [UserController::class, 'getAll']);
-Route::post('users/create', [UserController::class, 'create']);
-Route::put('users/update', [UserController::class, 'update']);
-Route::delete('users/delete', [UserController::class, 'delete']);
 
-Route::get('clients/all', [ClientController::class, 'getAll']);
-Route::post('clients/create', [ClientController::class, 'create']);
-Route::put('clients/update', [ClientController::class, 'update']);
-Route::delete('clients/delete', [ClientController::class, 'delete']);
+
+
 
 
 
 
 Route::middleware('auth:api')->group(function () {
     Route::get('clients/all', [ClientController::class, 'getAll']);
+    Route::post('clients/create', [ClientController::class, 'create']);
+    Route::put('clients/update', [ClientController::class, 'update']);
+    Route::delete('clients/delete', [ClientController::class, 'delete']);
 
     Route::post('messages/create', [MessageController::class, 'create']);
-    Route::post('messages/read', [MessageController::class, 'read']);
+    Route::put('messages/read', [MessageController::class, 'read']);
+    Route::put('messages/handled', [MessageController::class, 'handled']);
+    Route::delete('messages/delete', [MessageController::class, 'delete']);
+
+    Route::get('users/all', [UserController::class, 'getAll']);
+    Route::post('users/create', [UserController::class, 'create']);
+    Route::put('users/update', [UserController::class, 'update']);
+    Route::delete('users/delete', [UserController::class, 'delete']);
 });
 
 
