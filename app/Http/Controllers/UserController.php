@@ -16,13 +16,13 @@ class UserController extends Controller
         $userList = array();
         foreach (User::orderBy('name', 'asc')->get() as $userItem) {
             $userItem->messages;
-            forEach ($userItem->messages as $message) {
+            foreach ($userItem->messages as $message) {
                 $message->client;
             }
             $userItem->messagesReadIds;
             $userItem->messagesReadArray;
             $array = [];
-            forEach (MessageRead::all() as $item) {
+            foreach (MessageRead::all() as $item) {
                 array_push($array, $item->id);
             }
             $userItem->test = Message::whereIn('id', $array)->get();
@@ -35,7 +35,7 @@ class UserController extends Controller
     {
         if (/*Auth::user()->admin == true*/true) {
             if ((!isset($request->name)) || (!isset($request->admin)) || (!isset($request->email)) || (!isset($request->password)) || (!isset($request->east)) ||
-            (!isset($request->lundby)) || (!isset($request->angered)) || (!isset($request->vh)) || (!isset($request->backa)) || (!isset($request->backa))
+                (!isset($request->lundby)) || (!isset($request->angered)) || (!isset($request->vh)) || (!isset($request->backa)) || (!isset($request->backa))
             ) {
                 return ['status' => 'missing-data', 'id' => 'missing-data', 'text' => 'Alla fält är ej ifyllda'];
             }
@@ -61,7 +61,7 @@ class UserController extends Controller
     {
         if (/*Auth::user()->admin == true*/true) {
             if ((!isset($request->name)) || (!isset($request->admin)) || (!isset($request->email)) || (!isset($request->east)) ||
-            (!isset($request->lundby)) || (!isset($request->angered)) || (!isset($request->vh)) || (!isset($request->backa)) || (!isset($request->backa))
+                (!isset($request->lundby)) || (!isset($request->angered)) || (!isset($request->vh)) || (!isset($request->backa)) || (!isset($request->backa))
             ) {
                 return ['status' => 'missing-data', 'id' => 'missing-data', 'text' => 'Alla fält är ej ifyllda'];
             }
@@ -102,5 +102,14 @@ class UserController extends Controller
                 return ['status' => 'not-found', 'field' => 'id', 'id' => 'id-not-found', 'text' => 'Det finns ingen användare registrerad med detta id'];
             }
         } else return ['status' => 'unauthenticated', 'text' => 'Du har inte behörigheten för att göra detta'];
+    }
+
+    public function changePassword(Request $request)
+    {
+        $oldUser = User::where('id', Auth::user()->id)->first();
+        $oldUser->update([
+            'password' => bcrypt($request->password),
+        ]);
+        return ['success' => true];
     }
 }

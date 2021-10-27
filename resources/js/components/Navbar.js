@@ -20,6 +20,11 @@ function Navbar() {
 			history.push(`/admin/meddelanden`);
 			setActiveItem(name);
 		}
+
+		if (name === 'Anvandare') {
+			history.push(`/admin/anvandare`);
+			setActiveItem(name);
+		}
 	}
 
 	return (
@@ -55,6 +60,13 @@ function Navbar() {
 							onClick={handleItemClick}
 						>
 							Admin
+						</Menu.Item>
+						<Menu.Item
+							name='Anvandare'
+							active={activeItem === 'Anvandare'}
+							onClick={handleItemClick}
+						>
+							Användare
 						</Menu.Item>
 					</Menu>
 				</div>

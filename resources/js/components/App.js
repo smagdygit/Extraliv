@@ -14,6 +14,7 @@ import Navbar from './Navbar';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'semantic-ui-css/semantic.min.css';
 import './App.css';
+import ChangePassword from './ChangePassword';
 
 function App() {
     const userObject = JSON.parse(localStorage.getItem('user'));
@@ -28,11 +29,12 @@ function App() {
                         <Route path="/login" component={Login} exact />
                         <Route path="/" component={Login} exact />
                         <Route path="/undefined" component={Login} exact />
-                        <Route path="/kunder" component={Clients} exact />
-                        <Route path="/kund/:id" component={Client} exact />
-                        <Route path="/anvandare" component={Users} exact />
-                        <Route path="/anvandare/:id" component={User} exact />
-                        <Route path="/admin/meddelanden" component={Messages} exact />
+                        <PrivateRoute path="/kunder" component={Clients} exact />
+                        <PrivateRoute path="/kund/:id" component={Client} exact />
+                        <PrivateRoute path="/admin/anvandare" component={Users} exact />
+                        <PrivateRoute path="/admin/anvandare/:id" component={User} exact />
+                        <PrivateRoute path="/admin/meddelanden" component={Messages} exact />
+                        <PrivateRoute path="/byt-losenord" component={ChangePassword} exact />
                     </Switch>
                 </div>
             </>

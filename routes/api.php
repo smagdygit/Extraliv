@@ -50,6 +50,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('users/create', [UserController::class, 'create']);
     Route::put('users/update', [UserController::class, 'update']);
     Route::delete('users/delete', [UserController::class, 'delete']);
+    Route::put('user/change-password', [UserController::class, 'changePassword']);
 });
 
 
