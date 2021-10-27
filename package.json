@@ -30,6 +30,7 @@
         "fix": "0.0.6",
         "next": "^11.1.0",
         "npm": "^7.21.0",
+        "react-icons": "^4.3.1",
         "react-router-dom": "^5.2.0",
         "semantic-ui-css": "^2.4.1",
         "semantic-ui-react": "^2.0.3"

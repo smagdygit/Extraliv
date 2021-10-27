@@ -27,8 +27,8 @@ function Clients() {
 	const [newUserPass, setNewUserPass] = useState('');
 	const [newUserPassError, setNewUserPassError] = useState(false);
 	const [newUserAdmin, setNewUserAdmin] = useState(false);
-	const [newUserCity, setNewUserCity] = useState("null");
-	const [newUserCityError, setNewUserCityError] = useState(false);
+	/*const [newUserCity, setNewUserCity] = useState("null");
+	const [newUserCityError, setNewUserCityError] = useState(false);*/
 	const [newUserSending, setNewUserSending] = useState(false);
 	const userObject = JSON.parse(localStorage.getItem('user'));
 
@@ -79,7 +79,7 @@ function Clients() {
 			setNewUserPassError(true);
 		}
 
-		if (newUserCity === 'null' || newUserCity === null) {
+		/*if (newUserCity === 'null' || newUserCity === null) {
 			errors = true;
 			setNewUserCityError(true);
 		}
@@ -100,11 +100,11 @@ function Clients() {
 					email: newUserMail,
 					password: newUserPass,
 					admin: newUserAdmin ? 1 : 0,
-					east: newUserCity === 'east' ? 1 : 0,
+					/*east: newUserCity === 'east' ? 1 : 0,
 					lundby: newUserCity === 'lundby' ? 1 : 0,
 					angered: newUserCity === 'angered' ? 1 : 0,
 					vh: newUserCity === 'vh' ? 1 : 0,
-					backa: newUserCity === 'backa' ? 1 : 0,
+					backa: newUserCity === 'backa' ? 1 : 0,*/
 					comment: '',
 				}),
 			})
@@ -244,7 +244,7 @@ function Clients() {
 					value={newUserPass}
 					onChange={(e) => setNewUserPass(e.target.value)}
 				/>
-				<Select
+				{/*<Select
 					className="mb-3"
 					fluid
 					placeholder='Välj stadsdel'
@@ -252,7 +252,7 @@ function Clients() {
 					options={optionsCity}
 					defaultValue={"null"}
 					onChange={(e, val) => setNewUserCity(val.value)}
-				/>
+				/>*/}
 				<Checkbox
 					className="mb-3"
 					toggle

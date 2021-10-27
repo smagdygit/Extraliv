@@ -206,7 +206,7 @@ function Clients() {
 				}
 			}
 		});
-	}, [animateRemoval.ms])
+	}, [animateRemoval.ms]);
 
 	const clientObj = fetchedMessages.find((x) => (x.id === clientId));
 	const unReadMessages = clientObj ? clientObj.messages.filter((item) => (item.read == false)).map((item, index) => (
@@ -275,6 +275,7 @@ function Clients() {
 
 	function popupSent() {
 		setNewHandover(false);
+		fetchClients(() => { });
 	}
 
 	return (

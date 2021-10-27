@@ -10,18 +10,44 @@ use App\Models\Client;
 
 class MessageController extends Controller
 {
+    public function getAll(Request $request)
+    {
+        $messageList = [];
+        foreach (Message::orderBy('updated_at', 'DESC')->get() as $messageItem) {
+
+            /* Convert '1' to 1, vice versa */
+            $messageItem->east = $messageItem->east === '1' ? 1 : 0;
+            $messageItem->lundby = $messageItem->lundby === '1' ? 1 : 0;
+            $messageItem->angered = $messageItem->angered === '1' ? 1 : 0;
+            $messageItem->vh = $messageItem->vh === '1' ? 1 : 0;
+            $messageItem->backa = $messageItem->backa === '1' ? 1 : 0;
+            $messageItem->readBy;
+            $messageItem->client;
+            $messageItem->user;
+
+            array_push($messageList, $messageItem);
+        }
+        return $messageList;
+    }
+
     public function create(Request $request)
     {
-        $newMessage = Message::create([
-            'user_id' => Auth::user()->id,
-            'client_id' => $request->client_id,
-            'content' => $request->content,
-        ])->id;
+        foreach ($request->data_map as $item) {
+            if ($item['user'] != null) {
+                $newMessage = Message::create([
+                    'user_id' => Auth::user()->id,
+                    'client_id' => $item['user'],
+                    'content' => $item['clean'] ? 'Ok!' : $item['content'],
+                    'handled' => false,
+                ])->id;
 
-        MessageRead::create([
-            'user_id' => Auth::user()->id,
-            'message_id' => $newMessage,
-        ]);
+                MessageRead::create([
+                    'user_id' => Auth::user()->id,
+                    'message_id' => $newMessage,
+                ]);
+            }
+        }
+
 
         /*
         $client = Client::where('id', $request->client_id)->first();
@@ -73,7 +99,7 @@ class MessageController extends Controller
         if (Auth::user()->admin == true) {
             $id = $request->id;
             if (Message::where('id', $id)->exists()) {
-                
+
                 Message::where('id', $id)->delete();
 
                 return ['status' => 'success'];

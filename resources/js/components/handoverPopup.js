@@ -26,38 +26,67 @@ function HandoverPopup(props) {
 	const [animateRemoval, setAnimateRemoval] = useState({ id: -1, ms: 0, timer: null });
 
 	const [clientNames, setClientNames] = useState(props.clients.map((item) => { return ({ key: item.id, text: item.name, value: item.id }) }));
-	const [dataMap, setDataMap] = useState([{ user: props.defaultClient, content: '', empty: false }, { user: null, content: '', empty: true }])
-
+	const [dataMap, setDataMap] = useState([{ user: props.defaultClient, content: '', empty: false, clean: false, error: '' }, { user: null, content: '', empty: true, clean: false, error: '' }]);
 
 	const userObject = JSON.parse(localStorage.getItem('user'));
 
 	useEffect(() => {
-		if (dataMap[dataMap.length - 1].user != null) setDataMap([...dataMap, ...[{ user: null, content: '', empty: true }]]);
+		if (dataMap[dataMap.length - 1].user != null) setDataMap([...dataMap, ...[{ user: null, content: '', empty: true, clean: false, error: '' }]]);
 	}, [dataMap]);
 
-	function sendNewHandover() {
-		setHandoverLoading(true);
-		fetch('/api/messages/create', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'Authorization': userObject.token,
-			},
-			body: JSON.stringify({
-				client_id: clientId,
-				content: handoverClean ? 'OK!' : handoverText,
-			}),
-		})
-			.then(response => response.json())
-			.then(data => {
-				fetchClients(() => {
-					setHandoverLoading(false);
-					setNewHandover(false);
-				});
-			});
+	function validateHandover() {
+
+		let isErrors = false;
+		const dataMapClone = [...dataMap];
+		dataMapClone.forEach((item) => {
+
+			//Reset
+			item.error = '';
+
+			//If there is content/ok but no user
+			if (item.user !== null && item.clean === false && item.content.length < 1) {
+				item.error = 'content';
+				isErrors = true;
+			}
+
+			//If there is user but no content/ok
+			if (item.user === null && (item.clean === true || item.content.length > 0)) {
+				item.error = 'user';
+				isErrors = true;
+			}
+
+		});
+		setDataMap([...dataMapClone]);
+
+		return (!isErrors);
 	}
 
+	function sendNewHandover() {
+		if (validateHandover()) {
+			setHandoverLoading(true);
+			fetch('/api/messages/create', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': userObject.token,
+				},
+				body: JSON.stringify({
+					data_map: dataMap,
+				}),
+			})
+				.then(response => response.json())
+				.then(data => {
+					props.sent();
+				});
+		}
+	}
 
+	function handleNewUser(item, index, data, id) {
+		setDataMap(dataMap.map((child, childIndex) => { return (childIndex === index ? { ...child, user: data.value } : child) }));
+		setClientNames(clientNames.filter((child) => {
+			return (child.key !== id);
+		}))
+	}
 
 	return (
 		<Modal
@@ -73,24 +102,26 @@ function HandoverPopup(props) {
 					{dataMap.map((item, index) => {
 						return (
 							<div key={'popperup' + index}>
-								<Header>Kund {index + 1}</Header>
+								<Header>Kund {index + 1} {index === dataMap.length - 1 ? '(valfri)' : ''}</Header>
 								<Form className="mb-5">
 									<Form.Dropdown
+										error={item.error === 'user'}
 										name='user'
 										label='Användare'
-										placeholder='Klas Bertilsson'
+										placeholder='Välj Kund'
 										disabled={clientNames.length === 0}
 										fluid
 										selection
 										options={clientNames}
 										value={item.user}
-										onChange={(e, data) => { setDataMap(dataMap.map((child, childIndex) => { return (childIndex === index ? { ...child, user: data.value } : child) }))}}
+										onChange={(e, data) => { handleNewUser({ ...item }, index, data, item.id) }}
 									/>
 									{!item.clean &&
 										<Form.TextArea
+											error={item.error === 'content'}
 											placeholder="Skriv vad nästa person behöver veta..."
 											value={item.content}
-											onChange={(e, data) => { setDataMap(dataMap.map((child, childIndex) => { return (childIndex === index ? { ...child, content: e.target.value } : child) }))}}
+											onChange={(e, data) => { setDataMap(dataMap.map((child, childIndex) => { return (childIndex === index ? { ...child, content: e.target.value } : child) })) }}
 										/>
 									}
 									<Checkbox

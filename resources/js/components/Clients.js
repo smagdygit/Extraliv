@@ -2,6 +2,7 @@ import { indexOf } from 'lodash';
 import React, { useState, useEffect, useContext } from 'react';
 import { useHistory, withRouter } from 'react-router-dom';
 import { Button, Form, Grid, Header, Image, Message, Segment, Input, Select, Divider, Modal, Icon, Loader, Checkbox, Textarea, Dimmer } from 'semantic-ui-react';
+import { GrMail } from 'react-icons/gr';
 
 const optionsCity = [
 	{ key: 'east', value: 'east', text: 'Östra' },
@@ -206,15 +207,27 @@ function Clients() {
 	}
 
 	function handleClientClick(id) {
-		history.push(`./kund/${id}`);
+		history.push(`/kund/${id}`);
 	}
 
 	const resultHTML = filteredClients.map((item, index) => {
 
 		return (
 			<Segment className="m-3 text-left" key={`clientResults${index}`} onClick={() => { handleClientClick(item.id) }/*setExpanded(item.id)*/}>
-				<h3>{item.name}</h3>
-				<p>{item.east ? 'Östra' : item.lundby ? 'Lundby' : item.angered ? 'Angered' : item.vh ? 'Västra Hisingen' : item.backa ? 'Backa' : 'Vet Ej'} - {item.messages.length} {item.messages.length === 1 ? 'ny överlämning' : 'nya överlämningar'} </p>
+				<Grid columns={2} className="ml-0 mr-0">
+					<Grid.Row>
+						<Grid.Column>
+							<h3>{item.name}</h3>
+							<p>{item.east ? 'Östra' : item.lundby ? 'Lundby' : item.angered ? 'Angered' : item.vh ? 'Västra Hisingen' : item.backa ? 'Backa' : 'Vet Ej'} - {item.messages.length} {item.messages.length === 1 ? 'ny överlämning' : 'nya överlämningar'} </p>
+						</Grid.Column>
+						<Grid.Column textAlign="right">
+							{item.messages.length > 0 &&
+								<GrMail size="3em" color="orange" />
+							}
+						</Grid.Column>
+					</Grid.Row>
+				</Grid>
+
 			</Segment>
 		);
 	});
@@ -222,49 +235,51 @@ function Clients() {
 
 	return (
 		<center>
-			<Segment className="m-3">
-				<Dimmer active={newClientSending}>
-					<Loader content="Lägger till kund..." />
-				</Dimmer>
-				<h4>Skapa ny kund</h4>
-				<Input
-					className="mb-3"
-					fluid
-					icon='address book'
-					iconPosition='left'
-					placeholder='Fullt Namn'
-					error={newClientNameError}
-					value={newClientName}
-					onChange={(e) => setNewClientName(e.target.value)}
-				/>
-				<Select
-					className="mb-3"
-					fluid
-					placeholder='Välj stadsdel'
-					error={newClientCityError}
-					options={optionsCity}
-					defaultValue={"null"}
-					onChange={(e, val) => setNewClientCity(val.value)}
-				/>
-				<Select
-					className="mb-3"
-					fluid
-					placeholder='Äldreomsorg / Funktionshinder'
-					error={newClientCareError}
-					options={optionsCare}
-					defaultValue={"null"}
-					onChange={(e, val) => setNewClientCare(val.value)}
-				/>
-				<Form>
-					<Form.TextArea
+			{!!userObject.admin &&
+				<Segment className="m-3">
+					<Dimmer active={newClientSending}>
+						<Loader content="Lägger till kund..." />
+					</Dimmer>
+					<h4>Skapa ny kund</h4>
+					<Input
 						className="mb-3"
-						placeholder="Admin-only information relaterat till kund"
-						value={newClientComment}
-						onChange={(e) => setNewClientComment(e.target.value)}
+						fluid
+						icon='address book'
+						iconPosition='left'
+						placeholder='Fullt Namn'
+						error={newClientNameError}
+						value={newClientName}
+						onChange={(e) => setNewClientName(e.target.value)}
 					/>
-				</Form>
-				<Button fluid color="green" onClick={sendNewClient}>Lägg till kund</Button>
-			</Segment>
+					<Select
+						className="mb-3"
+						fluid
+						placeholder='Välj stadsdel'
+						error={newClientCityError}
+						options={optionsCity}
+						defaultValue={"null"}
+						onChange={(e, val) => setNewClientCity(val.value)}
+					/>
+					<Select
+						className="mb-3"
+						fluid
+						placeholder='Äldreomsorg / Funktionshinder'
+						error={newClientCareError}
+						options={optionsCare}
+						defaultValue={"null"}
+						onChange={(e, val) => setNewClientCare(val.value)}
+					/>
+					<Form>
+						<Form.TextArea
+							className="mb-3"
+							placeholder="Admin-only information relaterat till kund"
+							value={newClientComment}
+							onChange={(e) => setNewClientComment(e.target.value)}
+						/>
+					</Form>
+					<Button fluid color="green" onClick={sendNewClient}>Lägg till kund</Button>
+				</Segment>
+			}
 			<Segment className="m-3">
 				<Input
 					fluid

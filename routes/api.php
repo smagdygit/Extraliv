@@ -40,6 +40,7 @@ Route::middleware('auth:api')->group(function () {
     Route::put('clients/update', [ClientController::class, 'update']);
     Route::delete('clients/delete', [ClientController::class, 'delete']);
 
+    Route::get('messages/all', [MessageController::class, 'getAll']);
     Route::post('messages/create', [MessageController::class, 'create']);
     Route::put('messages/read', [MessageController::class, 'read']);
     Route::put('messages/handled', [MessageController::class, 'handled']);

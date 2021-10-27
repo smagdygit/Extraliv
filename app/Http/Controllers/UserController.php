@@ -16,6 +16,9 @@ class UserController extends Controller
         $userList = array();
         foreach (User::orderBy('name', 'asc')->get() as $userItem) {
             $userItem->messages;
+            forEach ($userItem->messages as $message) {
+                $message->client;
+            }
             $userItem->messagesReadIds;
             $userItem->messagesReadArray;
             $array = [];
