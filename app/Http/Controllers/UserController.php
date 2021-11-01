@@ -75,6 +75,7 @@ class UserController extends Controller
                 'vh' => $request->vh,
                 'backa' => $request->backa,
                 'comment' => ($request->comment == '') ? '' : $request->comment,
+                'force_change' => true,
             ]);
 
             return ['status' => 'success', 'users' => $this->getAll()];
@@ -104,6 +105,7 @@ class UserController extends Controller
                     'vh' => $request->vh,
                     'backa' => $request->backa,
                     'comment' => ($request->comment == '') ? '' : $request->comment,
+                    'force_change' => ($request->password == '') ? false : true,
                 ]);
 
                 return ['status' => 'success', 'employees' => $this->getAll()];
