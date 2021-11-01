@@ -13,22 +13,29 @@ const optionsCity = [
 
 function HandoverPopup(props) {
 	const history = useHistory();
-	const [fetchedMessages, setfetchedMessages] = useState([]);
-	const [filteredMessages, setfilteredMessages] = useState([]);
-	const [filterText, setFilterText] = useState('');
-	const [filterCity, setFilterCity] = useState('');
-	const [expanded, setExpanded] = useState(0);
-	const [clientId, setClientId] = useState(parseInt(useParams().id));
-	const [newHandover, setNewHandover] = useState(false);
-	const [handoverText, setHandoverText] = useState('');
-	const [handoverClean, setHandoverClean] = useState(false);
 	const [handoverLoading, setHandoverLoading] = useState(false);
+	const [fetchedClients, setFetchedClients] = useState([]);
 	const [animateRemoval, setAnimateRemoval] = useState({ id: -1, ms: 0, timer: null });
 
-	const [clientNames, setClientNames] = useState(props.clients.map((item) => { return ({ key: item.id, text: item.name, value: item.id }) }));
+	const [clientNames, setClientNames] = useState([]);
 	const [dataMap, setDataMap] = useState([{ user: props.defaultClient, content: '', empty: false, clean: false, error: '' }, { user: null, content: '', empty: true, clean: false, error: '' }]);
 
 	const userObject = JSON.parse(localStorage.getItem('user'));
+
+	useEffect(() => {
+		fetch('/api/clients/all', {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': userObject.token,
+			},
+		})
+			.then(response => response.json())
+			.then(data => {
+				setFetchedClients(data);
+				setClientNames(data.map((item) => { return ({ key: item.id, text: item.name, value: item.id }) }));
+			});
+	}, []);
 
 	useEffect(() => {
 		if (dataMap[dataMap.length - 1].user != null) setDataMap([...dataMap, ...[{ user: null, content: '', empty: true, clean: false, error: '' }]]);
@@ -93,13 +100,13 @@ function HandoverPopup(props) {
 			onClose={props.canceled}
 			open={true}
 		>
-			<Dimmer active={handoverLoading}>
+			<Dimmer active={handoverLoading || fetchedClients.length === 0}>
 				<Loader size="huge" content="Skickar överlämning..." />
 			</Dimmer>
 			<Modal.Header>Ny Överlämning</Modal.Header>
 			<Modal.Content image>
 				<Modal.Description>
-					{dataMap.map((item, index) => {
+					{fetchedClients.length > 0 && dataMap.map((item, index) => {
 						return (
 							<div key={'popperup' + index}>
 								<Header>Kund {index + 1} {index === dataMap.length - 1 ? '(valfri)' : ''}</Header>

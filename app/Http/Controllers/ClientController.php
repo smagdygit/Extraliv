@@ -8,6 +8,40 @@ use App\Models\Client;
 
 class ClientController extends Controller
 {
+    public function get($id) {
+        //If client exists
+        if (Client::where('id', $id)->exists()) {
+            $client = Client::where('id', $id)->first();
+
+            //Get all extra data for client
+
+            /* Convert '1' to 1, vice versa */
+            $client->east = $client->east === '1' ? 1 : 0;
+            $client->lundby = $client->lundby === '1' ? 1 : 0;
+            $client->angered = $client->angered === '1' ? 1 : 0;
+            $client->vh = $client->vh === '1' ? 1 : 0;
+            $client->backa = $client->backa === '1' ? 1 : 0;
+
+            $clientMessages = $client->messages;
+            foreach ($clientMessages as $message) {
+                $message->readBy;
+                $message->user;
+            }
+
+            foreach ($client->messages as $message) {
+                $message->read = false;
+                foreach ($message->readBy as $readBy) {
+                    $message->read = ($readBy->id === Auth::user()->id);
+                }
+            }
+
+            return ['status' => 'success', 'client' => $client];
+        } else {
+            //If client does not exist
+            return ['status' => 'error', 'error' => 'User does not exist'];
+        }
+    }
+
     public function getAll()
     {
         $clientList = array();

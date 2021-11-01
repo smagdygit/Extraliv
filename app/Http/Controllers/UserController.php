@@ -11,6 +11,30 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+    public function get($id) {
+        //If user exists
+        if (User::where('id', $id)->exists()) {
+            $user = User::where('id', $id)->first();
+            //Get all extra data for user
+            $user->messages;
+            foreach ($user->messages as $message) {
+                $message->client;
+            }
+            $user->messagesReadIds;
+            $user->messagesReadArray;
+            $array = [];
+            foreach (MessageRead::all() as $item) {
+                array_push($array, $item->id);
+            }
+            $user->test = Message::whereIn('id', $array)->get();
+            
+            return ['status' => 'success', 'user' => $user];
+        } else {
+            //If user does not exist
+            return ['status' => 'error', 'error' => 'User does not exist'];
+        }
+    }
+
     public function getAll()
     {
         $userList = array();

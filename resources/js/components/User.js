@@ -1,6 +1,6 @@
 import { indexOf } from 'lodash';
 import React, { useState, useEffect, useContext } from 'react';
-import { useHistory, withRouter } from 'react-router-dom';
+import { useHistory, withRouter, useParams } from 'react-router-dom'
 import { Button, Form, Grid, Header, Image, Message, Segment, Input, Select, Divider, Modal, Icon, Loader, Checkbox, Dimmer } from 'semantic-ui-react';
 
 const optionsCity = [
@@ -20,14 +20,16 @@ function Clients() {
 	const [filterCity, setFilterCity] = useState('');
 	const [expanded, setExpanded] = useState(0);
 	const [newHandover, setNewHandover] = useState(false);
+	const [clientId, setClientId] = useState(parseInt(useParams().id));
+	const [pageUser, setPageUser] = useState();
 	const [handoverText, setHandoverText] = useState('');
-	const [newUserName, setNewUserName] = useState(userObject.name);
+	const [newUserName, setNewUserName] = useState('');
 	const [newUserNameError, setNewUserNameError] = useState(false);
-	const [newUserMail, setNewUserMail] = useState(userObject.email);
+	const [newUserMail, setNewUserMail] = useState('');
 	const [newUserMailError, setNewUserMailError] = useState(false);
 	const [newUserPass, setNewUserPass] = useState('');
 	const [newUserPassError, setNewUserPassError] = useState(false);
-	const [newUserAdmin, setNewUserAdmin] = useState(!!userObject.admin);
+	const [newUserAdmin, setNewUserAdmin] = useState(false);
 	/*const [newUserCity, setNewUserCity] = useState(userObject.angered ? 'angered' : userObject.east ? 'east' : userObject.lundby ? 'lundby' : userObject.vh ? 'vh' : userObject.backa ? 'backa' : 'null');
 	const [newUserCityError, setNewUserCityError] = useState(false);*/
 	const [newUserSending, setNewUserSending] = useState(false);
@@ -41,7 +43,7 @@ function Clients() {
 	}, []);
 
 	function fetchUsers() {
-		fetch('/api/users/all', {
+		fetch(`/api/user/${clientId}`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -50,8 +52,10 @@ function Clients() {
 		})
 			.then(response => response.json())
 			.then(data => {
-				setFetchedClients(data);
-				setFilteredClients(data);
+				setPageUser(data.user);
+				setNewUserName(data.user.name)
+				setNewUserMail(data.user.email)
+				setNewUserAdmin(!!data.user.admin)
 			});
 	}
 
@@ -120,91 +124,16 @@ function Clients() {
 		}
 	}
 
-	function updateFilter() {
-		const filtered = fetchedClients.filter((item) => {
-			return (item.name.toLowerCase().indexOf(filterText.toLowerCase()) !== -1);
-		});
-		setFilteredClients(filtered);
-	}
-
-	function handleText(e) {
-		setFilterCity('');
-		setFilterText(e.target.value);
-		setExpanded(0);
-		setNewHandover(false);
-
-		const filtered = fetchedClients.filter((item) => {
-			return (item.name.toLowerCase().indexOf(e.target.value.toLowerCase()) !== -1);
-		});
-
-		setFilteredClients(filtered);
-	}
-
-	function expandedHTML(item) {
-		return (
-			<Segment>
-				<Grid className="m-0" divided="vertically">
-					<Grid.Row className="m-0 pb-0">
-						<Grid.Column width={12} className="pl-3">
-							<h4>Åbert Fensson</h4>
-						</Grid.Column>
-						<Grid.Column width={4} className="text-right">
-							<h4>27 Juli</h4>
-						</Grid.Column>
-					</Grid.Row>
-					<Grid.Row className="m-0 pt-5 pb-5">
-						<Grid.Column>
-							<p style={{ fontSize: '1.2rem' }}>Testsson got lost in the forrest, im not sure where he is. The next employee working should probably go find him. I'd do it myself but my dog wants my attention so I need to go home and cuddle him ASAP.</p>
-						</Grid.Column>
-					</Grid.Row>
-				</Grid>
-				<Grid.Row className="m-0 mb-3">
-					<Button fluid color="green">Markera som läst</Button>
-				</Grid.Row>
-				<Grid.Row className="m-0 mb-3" onClick={() => setNewHandover(true)}>
-					<Button fluid color="blue">Skapa ny överläming</Button>
-				</Grid.Row>
-				<Grid.Row className="m-0">
-					<Button fluid>Överlämningshistorik</Button>
-				</Grid.Row>
-			</Segment>
-		);
-	}
-
-	function newHandoverHTML(item) {
-		return (
-			<Segment>
-				<Grid className="m-0" divided="vertically">
-					<Grid.Row className="m-0 pb-0">
-						<Grid.Column>
-							<h4>Ny Överlämning</h4>
-							<Form>
-								<Form.TextArea
-									label="Meddelande"
-									placeholder="Skriv vad nästa person behöver veta..."
-									value={handoverText}
-									onChange={(e) => setHandoverText(e.target.value)}
-								/>
-								<Button fluid color="green">Skicka överlämning</Button>
-							</Form>
-						</Grid.Column>
-					</Grid.Row>
-				</Grid>
-			</Segment>
-		);
-	}
-
-	const clientObj = fetchedClients[1];//fetchedMessages.find((x) => (x.id === clientId));
-	const unReadMessages = clientObj ? clientObj.messages.filter((item) => (item.read == false)).map((item, index) => (
+	const unReadMessages = pageUser ? pageUser.messages.filter((item) => (item.read == false)).map((item, index) => (
 		messageHTML(item, index, false, animateRemoval.id === item.id)
 	)) : [];
-	const readMessages = clientObj ? clientObj.messages.filter((item) => (item.read == true)).map((item, index) => (
+	const readMessages = pageUser ? pageUser.messages.filter((item) => (item.read == true)).map((item, index) => (
 		messageHTML(item, index, true, false)
 	)) : [];
-	const unhandledMessages = clientObj ? clientObj.messages.filter((item) => (item.handled == false)).map((item, index) => (
+	const unhandledMessages = pageUser ? pageUser.messages.filter((item) => (item.handled == false)).map((item, index) => (
 		messageHTML(item, index, false, animateRemoval.id === item.id)
 	)) : [];
-	const handledMessages = clientObj ? clientObj.messages.filter((item) => (item.handled == true)).map((item, index) => (
+	const handledMessages = pageUser ? pageUser.messages.filter((item) => (item.handled == true)).map((item, index) => (
 		messageHTML(item, index, true, false)
 	)) : [];
 
@@ -244,10 +173,6 @@ function Clients() {
 				</Grid.Row>
 			</Segment>
 		)
-	}
-
-	function handleClientClick(id) {
-		history.push(`./kund/${id}`);
 	}
 
 	const resultHTML = filteredClients.map((item, index) => {
@@ -315,9 +240,9 @@ function Clients() {
 					checked={newUserAdmin}
 					onChange={(e) => setNewUserAdmin(!newUserAdmin)}
 				/>
-				<Button fluid color="green" onClick={sendNewUser}>Uppdatera användare</Button>
+				<Button disabled={!pageUser} fluid color="green" onClick={sendNewUser}>Uppdatera användare</Button>
 			</Segment>
-			{resultHTML.length > 0 &&
+			{pageUser &&
 				<>
 					<div>
 						{
@@ -334,7 +259,7 @@ function Clients() {
 					<p>{resultHTML.length} Resultat</p>
 				</>
 			}
-			{resultHTML.length === 0 &&
+			{!pageUser &&
 				<Segment style={{ marginTop: '15%' }} basic>
 					<Loader active size='big'>Laddar</Loader>
 				</Segment>

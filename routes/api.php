@@ -39,6 +39,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('clients/create', [ClientController::class, 'create']);
     Route::put('clients/update', [ClientController::class, 'update']);
     Route::delete('clients/delete', [ClientController::class, 'delete']);
+    Route::get('client/{id}', [ClientController::class, 'get']);
 
     Route::get('messages/all', [MessageController::class, 'getAll']);
     Route::post('messages/create', [MessageController::class, 'create']);
@@ -51,6 +52,7 @@ Route::middleware('auth:api')->group(function () {
     Route::put('users/update', [UserController::class, 'update']);
     Route::delete('users/delete', [UserController::class, 'delete']);
     Route::put('user/change-password', [UserController::class, 'changePassword']);
+    Route::get('user/{id}', [UserController::class, 'get']);
 });
 
 

@@ -22,17 +22,8 @@ function Clients() {
 	const [fetchedClients, setFetchedClients] = useState([]);
 	const [filteredClients, setFilteredClients] = useState([]);
 	const [filterText, setFilterText] = useState('');
-	const [filterCity, setFilterCity] = useState('');
-	const [expanded, setExpanded] = useState(0);
-	const [newHandover, setNewHandover] = useState(false);
-	const [handoverText, setHandoverText] = useState('');
 	const [newClientName, setNewClientName] = useState('');
 	const [newClientNameError, setNewClientNameError] = useState(false);
-	const [newClientMail, setNewClientMail] = useState('');
-	const [newClientMailError, setNewClientMailError] = useState(false);
-	const [newClientPass, setNewClientPass] = useState('');
-	const [newClientPassError, setNewClientPassError] = useState(false);
-	const [newClientAdmin, setNewClientAdmin] = useState(false);
 	const [newClientCity, setNewClientCity] = useState('null');
 	const [newClientCityError, setNewClientCityError] = useState(false);
 	const [newClientCare, setNewClientCare] = useState('null');
@@ -121,13 +112,6 @@ function Clients() {
 		}
 	}
 
-	function updateFilter() {
-		const filtered = fetchedClients.filter((item) => {
-			return (item.name.toLowerCase().indexOf(filterText.toLowerCase()) !== -1);
-		});
-		setFilteredClients(filtered);
-	}
-
 	function handleText(e) {
 		setFilterCity(null);
 		setFilterText(e.target.value);
@@ -150,60 +134,6 @@ function Clients() {
 		});
 
 		setFilteredClients(filtered);
-	}
-
-	function expandedHTML(item) {
-		return (
-			<Segment>
-				<Grid className="m-0" divided="vertically">
-					<Grid.Row className="m-0 pb-0">
-						<Grid.Column width={12} className="pl-3">
-							<h4>Åbert Fensson</h4>
-						</Grid.Column>
-						<Grid.Column width={4} className="text-right">
-							<h4>27 Juli</h4>
-						</Grid.Column>
-					</Grid.Row>
-					<Grid.Row className="m-0 pt-5 pb-5">
-						<Grid.Column>
-							<p style={{ fontSize: '1.2rem' }}>Testsson got lost in the forrest, im not sure where he is. The next employee working should probably go find him. I'd do it myself but my dog wants my attention so I need to go home and cuddle him ASAP.</p>
-						</Grid.Column>
-					</Grid.Row>
-				</Grid>
-				<Grid.Row className="m-0 mb-3">
-					<Button fluid color="green">Markera som läst</Button>
-				</Grid.Row>
-				<Grid.Row className="m-0 mb-3" onClick={() => setNewHandover(true)}>
-					<Button fluid color="blue">Skapa ny överläming</Button>
-				</Grid.Row>
-				<Grid.Row className="m-0">
-					<Button fluid>Överlämningshistorik</Button>
-				</Grid.Row>
-			</Segment>
-		);
-	}
-
-	function newHandoverHTML(item) {
-		return (
-			<Segment>
-				<Grid className="m-0" divided="vertically">
-					<Grid.Row className="m-0 pb-0">
-						<Grid.Column>
-							<h4>Ny Överlämning</h4>
-							<Form>
-								<Form.TextArea
-									label="Meddelande"
-									placeholder="Skriv vad nästa person behöver veta..."
-									value={handoverText}
-									onChange={(e) => setHandoverText(e.target.value)}
-								/>
-								<Button fluid color="green">Skicka överlämning</Button>
-							</Form>
-						</Grid.Column>
-					</Grid.Row>
-				</Grid>
-			</Segment>
-		);
 	}
 
 	function handleClientClick(id) {

@@ -12,24 +12,30 @@ const optionsCity = [
 	{ key: 'backa', value: 'backa', text: 'Backa' },
 ]
 
+const optionsCare = [
+	{ key: 'old', value: 'old', text: 'Äldreomsorg' },
+	{ key: 'young', value: 'young', text: 'Funktionshinder' },
+]
+
 function Clients() {
 	const history = useHistory();
 	const [fetchedMessages, setfetchedMessages] = useState([]);
-	const [filteredMessages, setfilteredMessages] = useState([]);
-	const [filterText, setFilterText] = useState('');
-	const [filterCity, setFilterCity] = useState('');
-	const [expanded, setExpanded] = useState(0);
 	const [clientId, setClientId] = useState(parseInt(useParams().id));
+	const [client, setClient] = useState(null);
 	const [newHandover, setNewHandover] = useState(false);
-	const [handoverText, setHandoverText] = useState('');
-	const [handoverClean, setHandoverClean] = useState(false);
-	const [handoverLoading, setHandoverLoading] = useState(false);
 	const [animateRemoval, setAnimateRemoval] = useState({ id: -1, ms: 0, timer: null });
+	const [newClientName, setNewClientName] = useState('');
+	const [newClientNameError, setNewClientNameError] = useState(false);
+	const [newClientCity, setNewClientCity] = useState('eas');
+	const [newClientCityError, setNewClientCityError] = useState(false);
+	const [newClientCare, setNewClientCare] = useState('null');
+	const [newClientCareError, setNewClientCareError] = useState(false);
+	const [newClientComment, setNewClientComment] = useState('');
 	const userObject = JSON.parse(localStorage.getItem('user'));
 
 
 	function fetchClients(returnFunc) {
-		fetch('/api/clients/all', {
+		fetch(`/api/client/${clientId}`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -38,15 +44,75 @@ function Clients() {
 		})
 			.then(response => response.json())
 			.then(data => {
+				setClient(data.client);
+
 				setfetchedMessages(data);
 
-				const unread = data.filter((item) => (item.read === false));
-				const read = data.filter((item) => (item.read === true));
-
-				setfilteredMessages({ unread: unread, read: read });
+				setNewClientName(data.client.name);
+				setNewClientCity(data.client.east ? 'east' : data.client.lundby ? 'lundby' : data.client.angered ? 'angered' : data.client.vh ? 'vh' : data.client.backa ? 'backa' : 'null');
+				setNewClientCare(data.client.care_type);
+				setNewClientComment(data.client.comment);
 
 				returnFunc();
 			});
+	}
+
+	function sendNewClient() {
+
+		/* CLEAR LAST VALIDATION */
+		setNewClientNameError(false);
+		setNewClientCareError(false);
+		setNewClientCityError(false);
+
+		/* VALIDATE */
+		let errors = false;
+
+		if (newClientName.length < 4) {
+			errors = true;
+			setNewClientNameError(true);
+		}
+
+		if (newClientCare === 'null' || newClientCare === null) {
+			errors = true;
+			setNewClientCareError(true);
+		}
+
+		if (newClientCity === 'null' || newClientCity === null) {
+			errors = true;
+			setNewClientCityError(true);
+		}
+
+		/* PROCEED IF NO ERRORS */
+		if (!errors) {
+
+			setNewClientSending(true);
+
+			/* POST */
+			fetch('/api/clients/create', {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': userObject.token,
+				},
+				body: JSON.stringify({
+					name: newClientName,
+					care_type: newClientCare,
+					east: newClientCity === 'east' ? 1 : 0,
+					lundby: newClientCity === 'lundby' ? 1 : 0,
+					angered: newClientCity === 'angered' ? 1 : 0,
+					vh: newClientCity === 'vh' ? 1 : 0,
+					backa: newClientCity === 'backa' ? 1 : 0,
+					comment: newClientComment,
+				}),
+			})
+				.then(response => response.json())
+				.then(data => {
+					setNewClientSending(false);
+					setFetchedClients([]);
+					setFilteredClients([]);
+					fetchClients();
+				});
+		}
 	}
 
 	useEffect(() => {
@@ -116,78 +182,6 @@ function Clients() {
 		history.push('../kunder');
 	}
 
-	function sendNewHandover() {
-		setHandoverLoading(true);
-		fetch('/api/messages/create', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'Authorization': userObject.token,
-			},
-			body: JSON.stringify({
-				client_id: clientId,
-				content: handoverClean ? 'OK!' : handoverText,
-			}),
-		})
-			.then(response => response.json())
-			.then(data => {
-				fetchClients(() => {
-					setHandoverLoading(false);
-					setNewHandover(false);
-				});
-			});
-	}
-
-	function modal(item) {
-		return (
-			<Modal
-				onClose={() => setNewHandover(false)}
-				open={newHandover}
-			>
-				<Dimmer active={handoverLoading}>
-					<Loader size="huge" content="Skickar överlämning..." />
-				</Dimmer>
-				<Modal.Header>Ny Överlämning</Modal.Header>
-				<Modal.Content image>
-					<Modal.Description>
-						{!handoverClean &&
-							<>
-								<Header>Meddelande</Header>
-								<Form>
-									<Form.TextArea
-										placeholder="Skriv vad nästa person behöver veta..."
-										value={handoverText}
-										onChange={(e) => setHandoverText(e.target.value)}
-									/>
-								</Form>
-							</>
-						}
-					</Modal.Description>
-					<Checkbox
-						className="mb-3"
-						toggle
-						label="Inget att Rapportera - Allt OK"
-						name="inget"
-						checked={handoverClean}
-						onChange={(e) => setHandoverClean(!handoverClean)}
-					/>
-				</Modal.Content>
-				<Modal.Actions>
-					<Button color='red' onClick={() => setNewHandover(false)}>
-						Avbryt
-					</Button>
-					<Button
-						content="Skicka in"
-						labelPosition='right'
-						icon='checkmark'
-						onClick={sendNewHandover}
-						positive
-					/>
-				</Modal.Actions>
-			</Modal>
-		);
-	}
-
 	useEffect(() => {
 		setTimeout(() => {
 			if (animateRemoval.id !== -1) {
@@ -208,17 +202,16 @@ function Clients() {
 		});
 	}, [animateRemoval.ms]);
 
-	const clientObj = fetchedMessages.find((x) => (x.id === clientId));
-	const unReadMessages = clientObj ? clientObj.messages.filter((item) => (item.read == false)).map((item, index) => (
+	const unReadMessages = client ? client.messages.filter((item) => (item.read == false)).map((item, index) => (
 		messageHTML(item, index, false, animateRemoval.id === item.id)
 	)) : [];
-	const readMessages = clientObj ? clientObj.messages.filter((item) => (item.read == true)).map((item, index) => (
+	const readMessages = client ? client.messages.filter((item) => (item.read == true)).map((item, index) => (
 		messageHTML(item, index, true, false)
 	)) : [];
-	const unhandledMessages = clientObj ? clientObj.messages.filter((item) => (item.handled == false)).map((item, index) => (
+	const unhandledMessages = client ? client.messages.filter((item) => (item.handled == false)).map((item, index) => (
 		messageHTML(item, index, false, animateRemoval.id === item.id)
 	)) : [];
-	const handledMessages = clientObj ? clientObj.messages.filter((item) => (item.handled == true)).map((item, index) => (
+	const handledMessages = client ? client.messages.filter((item) => (item.handled == true)).map((item, index) => (
 		messageHTML(item, index, true, false)
 	)) : [];
 
@@ -280,17 +273,57 @@ function Clients() {
 
 	return (
 		<center>
-			{!!newHandover && <HandoverPopup canceled={popupCanceled} sent={popupSent} clients={fetchedMessages} defaultClient={clientId}/>}
+			{!!newHandover && <HandoverPopup canceled={popupCanceled} sent={popupSent} clients={fetchedMessages} defaultClient={clientId} />}
 			<Segment className="m-3 p-0">
 				<Button.Group widths="2">
 					<Button color="red" onClick={goBack}><Icon name="long arrow alternate left" size="big" /></Button>
 					<Button color="green" onClick={() => setNewHandover(true)}>Ny Överlämning</Button>
 				</Button.Group>
 			</Segment>
+			<Segment className="m-3">
+				<h4>Uppdatera kund</h4>
+				<Input
+					className="mb-3"
+					fluid
+					icon='address book'
+					iconPosition='left'
+					placeholder='Fullt Namn'
+					error={newClientNameError}
+					value={newClientName}
+					onChange={(e) => setNewClientName(e.target.value)}
+				/>
+				<Select
+					className="mb-3"
+					fluid
+					placeholder='Välj stadsdel'
+					error={newClientCityError}
+					options={optionsCity}
+					value={newClientCity}
+					onChange={(e, val) => setNewClientCity(val.value)}
+				/>
+				<Select
+					className="mb-3"
+					fluid
+					placeholder='Äldreomsorg / Funktionshinder'
+					error={newClientCareError}
+					options={optionsCare}
+					value={newClientCare}
+					onChange={(e, val) => setNewClientCare(val.value)}
+				/>
+				<Form>
+					<Form.TextArea
+						className="mb-3"
+						placeholder="Admin-only information relaterat till kund"
+						value={newClientComment}
+						onChange={(e) => setNewClientComment(e.target.value)}
+					/>
+				</Form>
+				<Button disabled={!client} fluid color="green" onClick={sendNewClient}>Lägg till kund</Button>
+			</Segment>
 
-			<h1 className="">{clientObj ? clientObj.name : ''}</h1>
+			<h1 className="">{client ? client.name : ''}</h1>
 
-			{fetchedMessages.length > 0 &&
+			{client &&
 				<>
 					<h3 className="mt-5">{userObject.admin ? 'Ohanterade Meddelanden' : 'Olästa Meddelanden'} ({userObject.admin ? unhandledMessages.length : unReadMessages.length})</h3>
 					<Divider className="m-3" />
@@ -300,7 +333,7 @@ function Clients() {
 					{userObject.admin ? handledMessages : readMessages}
 				</>
 			}
-			{fetchedMessages.length === 0 &&
+			{!client &&
 				<Segment style={{ marginTop: '15%' }} basic>
 					<Loader active size='big'>Laddar</Loader>
 				</Segment>

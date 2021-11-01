@@ -192,16 +192,16 @@ function Clients() {
 		);
 	}
 
-	function handleClientClick(id) {
-		history.push(`./kund/${id}`);
+	function handleUserClick(id) {
+		history.push(`/admin/anvandare/${id}`);
 	}
 
 	const resultHTML = filteredClients.map((item, index) => {
 		return (
-			<Segment className="m-3 text-left" key={`userResults${index}`}>
+			<Segment className="m-3 text-left" key={`userResults${index}`} onClick={() => { handleUserClick(item.id) }} >
 				<h3>{item.name}</h3>
 				<p>{item.east ? 'Östra - ' : item.lundby ? 'Lundby - ' : item.angered ? 'Angered - ' : item.vh ? 'Västra Hisingen - ' : item.backa ? 'Backa - ' : ''}{item.admin ? 'Admin' : 'Personal'} </p>
-			</Segment>
+			</Segment >
 		);
 	});
 
