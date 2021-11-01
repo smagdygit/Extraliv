@@ -58,8 +58,7 @@ class UserController extends Controller
     public function create(Request $request)
     {
         if (/*Auth::user()->admin == true*/true) {
-            if ((!isset($request->name)) || (!isset($request->admin)) || (!isset($request->email)) || (!isset($request->password)) || (!isset($request->east)) ||
-                (!isset($request->lundby)) || (!isset($request->angered)) || (!isset($request->vh)) || (!isset($request->backa)) || (!isset($request->backa))
+            if ((!isset($request->name)) || (!isset($request->admin)) || (!isset($request->email)) || (!isset($request->password))
             ) {
                 return ['status' => 'missing-data', 'id' => 'missing-data', 'text' => 'Alla fält är ej ifyllda'];
             }
@@ -69,11 +68,11 @@ class UserController extends Controller
                 'email' => $request->email,
                 'password' => bcrypt($request->password),
                 'admin' => $request->admin,
-                'east' => $request->east,
-                'lundby' => $request->lundby,
-                'angered' => $request->angered,
-                'vh' => $request->vh,
-                'backa' => $request->backa,
+                'east' => 0,//$request->east,
+                'lundby' => 0,//request->lundby,
+                'angered' => 0,//$request->angered,
+                'vh' => 0,//$request->vh,
+                'backa' => 0,//$request->backa,
                 'comment' => ($request->comment == '') ? '' : $request->comment,
                 'force_change' => true,
             ]);
@@ -85,8 +84,7 @@ class UserController extends Controller
     public function update(Request $request)
     {
         if (/*Auth::user()->admin == true*/true) {
-            if ((!isset($request->name)) || (!isset($request->admin)) || (!isset($request->email)) || (!isset($request->east)) ||
-                (!isset($request->lundby)) || (!isset($request->angered)) || (!isset($request->vh)) || (!isset($request->backa)) || (!isset($request->backa))
+            if ((!isset($request->name)) || (!isset($request->admin)) || (!isset($request->email))
             ) {
                 return ['status' => 'missing-data', 'id' => 'missing-data', 'text' => 'Alla fält är ej ifyllda'];
             }
@@ -94,16 +92,16 @@ class UserController extends Controller
             $userId = $request->id;
             if (User::where('id', $userId)->exists()) {
                 $oldUser = User::where('id', $userId)->first();
-                $oldUser->update([
+                User::where('id', $userId)->update([
                     'name' => $request->name,
                     'email' => $request->email,
                     'password' => ($request->password == '') ? $oldUser->password : bcrypt($request->password),
                     'admin' => $request->admin,
-                    'east' => $request->east,
-                    'lundby' => $request->lundby,
-                    'angered' => $request->angered,
-                    'vh' => $request->vh,
-                    'backa' => $request->backa,
+                    'east' => 0,//$request->east,
+                    'lundby' => 0,//request->lundby,
+                    'angered' => 0,//$request->angered,
+                    'vh' => 0,//$request->vh,
+                    'backa' => 0,//$request->backa,
                     'comment' => ($request->comment == '') ? '' : $request->comment,
                     'force_change' => ($request->password == '') ? false : true,
                 ]);
@@ -135,6 +133,7 @@ class UserController extends Controller
         $oldUser = User::where('id', Auth::user()->id)->first();
         $oldUser->update([
             'password' => bcrypt($request->password),
+            'force_change' => false,
         ]);
         return ['success' => true];
     }

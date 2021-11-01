@@ -59,7 +59,7 @@ function Clients() {
 		setNewUserNameError(false);
 		setNewUserMailError(false);
 		setNewUserPassError(false);
-		setNewUserCityError(false);
+		//setNewUserCityError(false);
 
 		/* VALIDATE */
 		let errors = false;

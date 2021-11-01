@@ -88,13 +88,14 @@ function Clients() {
 			setNewClientSending(true);
 
 			/* POST */
-			fetch('/api/clients/create', {
+			fetch('/api/clients/update', {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json',
 					'Authorization': userObject.token,
 				},
 				body: JSON.stringify({
+					id: client.id,
 					name: newClientName,
 					care_type: newClientCare,
 					east: newClientCity === 'east' ? 1 : 0,

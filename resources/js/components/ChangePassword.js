@@ -28,7 +28,10 @@ function Clients() {
 				.then(data => {
 					setSending(false);
 					if (data.success) {
-						alert('yes');
+						const changedUser = {...userObject};
+						changedUser.force_change = false;
+						localStorage.setItem('user', JSON.stringify(changedUser));
+						history.push(`/kunder`);
 					} else {
 						setError(' - Okänt fel, kontakta systemadministatör');
 					}

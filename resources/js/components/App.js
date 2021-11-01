@@ -34,7 +34,7 @@ function App() {
                         <PrivateRoute path="/admin/anvandare" component={Users} exact />
                         <PrivateRoute path="/admin/anvandare/:id" component={User} exact />
                         <PrivateRoute path="/admin/meddelanden" component={Messages} exact />
-                        <PrivateRoute path="/byt-losenord" component={ChangePassword} exact />
+                        <Route path="/byt-losenord" component={ChangePassword} exact />
                     </Switch>
                 </div>
             </>

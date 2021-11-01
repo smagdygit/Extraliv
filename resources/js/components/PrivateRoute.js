@@ -14,14 +14,13 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
 			{...rest}
 			render={props =>
 				(userObject !== null) ? (
-					<Component {...rest} {...props} />
-				) : (
-					(userObject.force_change ? (
+					userObject.force_change ? (
 						<Redirect to={{ pathname: '/byt-losenord', state: { from: props.location } }} />
 					) : (
-						<Redirect to={{ pathname: '/login', state: { from: props.location } }} />
+						<Component {...rest} {...props} />
 					)
-					)
+				) : (
+					<Redirect to={{ pathname: '/login', state: { from: props.location } }} />
 				)
 			}
 		/>

@@ -64,7 +64,7 @@ function Clients() {
 		setNewUserNameError(false);
 		setNewUserMailError(false);
 		setNewUserPassError(false);
-		setNewUserCityError(false);
+		//setNewUserCityError(false);
 
 		/* VALIDATE */
 		let errors = false;
@@ -94,7 +94,7 @@ function Clients() {
 
 			/* POST */
 			setNewUserSending(true);
-			fetch('/api/users/create', {
+			fetch('/api/users/update', {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json',
@@ -105,7 +105,7 @@ function Clients() {
 					email: newUserMail,
 					password: newUserPass,
 					admin: newUserAdmin ? 1 : 0,
-					id: userObject.id,
+					id: pageUser.id,
 					/*east: newUserCity === 'east' ? 1 : 0,
 					lundby: newUserCity === 'lundby' ? 1 : 0,
 					angered: newUserCity === 'angered' ? 1 : 0,

@@ -44,7 +44,7 @@ function Navbar() {
 					</Grid.Row>
 				</Grid>
 			</Segment>
-			{!!userObject.admin &&
+			{userObject && !!userObject.admin &&
 				<div className="m-3 p-0">
 					<Menu className="m-0 p-0" fluid widths={3}>
 						<Menu.Item
