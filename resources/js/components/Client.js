@@ -116,6 +116,23 @@ function Clients() {
 		}
 	}
 
+	function deleteClient() {
+		fetch('/api/clients/delete', {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': userObject.token,
+			},
+			body: JSON.stringify({
+				id: client.id,
+			}),
+		})
+			.then(response => response.json())
+			.then(data => {
+				history.push(`/kunder/`);
+			});
+	}
+
 	useEffect(() => {
 		fetchClients(() => { });
 	}, []);
@@ -319,7 +336,8 @@ function Clients() {
 						onChange={(e) => setNewClientComment(e.target.value)}
 					/>
 				</Form>
-				<Button disabled={!client} fluid color="green" onClick={sendNewClient}>Lägg till kund</Button>
+				<Button disabled={!client} fluid color="green" onClick={sendNewClient}>Uppdatera kund</Button>
+				<Button className="mt-3" disabled={!client} fluid color="red" onClick={deleteClient}>Radera kund</Button>
 			</Segment>
 
 			<h1 className="">{client ? client.name : ''}</h1>

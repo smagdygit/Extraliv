@@ -124,6 +124,23 @@ function Clients() {
 		}
 	}
 
+	function deleteUser() {
+		fetch('/api/users/delete', {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': userObject.token,
+			},
+			body: JSON.stringify({
+				id: pageUser.id,
+			}),
+		})
+			.then(response => response.json())
+			.then(data => {
+				history.push(`/anvandare/`);
+			});
+	}
+
 	const unReadMessages = pageUser ? pageUser.messages.filter((item) => (item.read == false)).map((item, index) => (
 		messageHTML(item, index, false, animateRemoval.id === item.id)
 	)) : [];
@@ -241,6 +258,7 @@ function Clients() {
 					onChange={(e) => setNewUserAdmin(!newUserAdmin)}
 				/>
 				<Button disabled={!pageUser} fluid color="green" onClick={sendNewUser}>Uppdatera användare</Button>
+				<Button className="mt-3" disabled={!pageUser} fluid color="red" onClick={deleteUser}>Radera användare</Button>
 			</Segment>
 			{pageUser &&
 				<>
