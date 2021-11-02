@@ -204,11 +204,18 @@ function Clients() {
 		setTimeout(() => {
 			if (animateRemoval.id !== -1) {
 				if (animateRemoval.ms < 0) {
-					const personIndex = fetchedMessages.findIndex((x) => (x.id === clientId));
-					const newMessages = [...fetchedMessages];
-					if (userObject.admin == true) newMessages[personIndex].messages[fetchedMessages[personIndex].messages.findIndex((x) => x.id === animateRemoval.id)].handled = true;
-					else newMessages[personIndex].messages[fetchedMessages[personIndex].messages.findIndex((x) => x.id === animateRemoval.id)].read = true;
-					setfetchedMessages([...newMessages]);
+					//const personIndex = fetchedMessages.findIndex((x) => (x.id === clientId));
+					//const newMessages = [...fetchedMessages];
+					const newMessages = {...client};
+					if (userObject.admin == true) newMessages.messages[client.messages.findIndex((x) => x.id === animateRemoval.id)].handled = true;
+					else newMessages.messages[client.messages.findIndex((x) => x.id === animateRemoval.id)].read = true;
+					//setfetchedMessages([...newMessages]);
+
+					//const newClient = {...client};
+					//newClient.messages = [...newMessages];
+					
+					setClient({...newMessages});
+
 					setAnimateRemoval({ ...animateRemoval.id = -1 });
 				}
 				else {
