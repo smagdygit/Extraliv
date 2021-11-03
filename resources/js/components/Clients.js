@@ -22,6 +22,7 @@ function Clients() {
 	const [fetchedClients, setFetchedClients] = useState([]);
 	const [filteredClients, setFilteredClients] = useState([]);
 	const [filterText, setFilterText] = useState('');
+	const [filterCity, setFilterCity] = useState(null);
 	const [newClientName, setNewClientName] = useState('');
 	const [newClientNameError, setNewClientNameError] = useState(false);
 	const [newClientCity, setNewClientCity] = useState('null');
@@ -115,8 +116,8 @@ function Clients() {
 	function handleText(e) {
 		setFilterCity(null);
 		setFilterText(e.target.value);
-		setExpanded(0);
-		setNewHandover(false);
+		//setExpanded(0);
+		//setNewHandover(false);
 
 		const filtered = fetchedClients.filter((item) => {
 			return (item.name.toLowerCase().indexOf(e.target.value.toLowerCase()) !== -1);
