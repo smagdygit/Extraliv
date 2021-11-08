@@ -146,6 +146,14 @@ function Clients() {
 		history.push(`/kund/${id}`);
 	}
 
+	function readOrHandled(message) {
+		if (!!userObject.admin) {
+			return !message.handled;
+		} else {
+			return !message.read;
+		}
+	}
+
 	const resultHTML = filteredClients.map((item, index) => {
 
 		return (
@@ -154,10 +162,10 @@ function Clients() {
 					<Grid.Row>
 						<Grid.Column width={12}>
 							<h3>{item.name}</h3>
-							<p>{item.east ? 'Östra' : item.lundby ? 'Lundby' : item.angered ? 'Angered' : item.vh ? 'Västra Hisingen' : item.backa ? 'Backa' : 'Vet Ej'} - {item.messages.length} {item.messages.length === 1 ? 'ny överlämning' : 'nya överlämningar'} </p>
+							<p>{item.east ? 'Östra' : item.lundby ? 'Lundby' : item.angered ? 'Angered' : item.vh ? 'Västra Hisingen' : item.backa ? 'Backa' : 'Vet Ej'} - {item.messages.filter(message => message.empty === 0 && readOrHandled(message)).length} {item.messages.filter(message => message.empty === 0 && readOrHandled(message)).length === 1 ? 'ny överlämning' : 'nya överlämningar'} </p>
 						</Grid.Column>
 						<Grid.Column width={4} textAlign="right">
-							{item.messages.length > 0 &&
+							{item.messages.filter(message => message.empty === 0 && readOrHandled(message)).length > 0 &&
 								<GrMail size="3em" color="orange" />
 							}
 						</Grid.Column>

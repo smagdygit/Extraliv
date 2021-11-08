@@ -227,16 +227,16 @@ function Clients() {
 		});
 	}, [animateRemoval.ms]);
 
-	const unReadMessages = client ? client.messages.filter((item) => (item.read == false)).map((item, index) => (
+	const unReadMessages = client ? client.messages.filter((item) => (item.read == false && item.empty === 0)).map((item, index) => (
 		messageHTML(item, index, false, animateRemoval.id === item.id)
 	)) : [];
-	const readMessages = client ? client.messages.filter((item) => (item.read == true)).map((item, index) => (
+	const readMessages = client ? client.messages.filter((item) => (item.read == true && item.empty === 0)).map((item, index) => (
 		messageHTML(item, index, true, false)
 	)) : [];
-	const unhandledMessages = client ? client.messages.filter((item) => (item.handled == false)).map((item, index) => (
+	const unhandledMessages = client ? client.messages.filter((item) => (item.handled == false && item.empty === 0)).map((item, index) => (
 		messageHTML(item, index, false, animateRemoval.id === item.id)
 	)) : [];
-	const handledMessages = client ? client.messages.filter((item) => (item.handled == true)).map((item, index) => (
+	const handledMessages = client ? client.messages.filter((item) => (item.handled == true && item.empty === 0)).map((item, index) => (
 		messageHTML(item, index, true, false)
 	)) : [];
 

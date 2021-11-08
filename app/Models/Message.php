@@ -17,6 +17,7 @@ class Message extends Model
         'client_id',
         'content',
         'handled',
+        'empty',
     ];
 
     public function user()

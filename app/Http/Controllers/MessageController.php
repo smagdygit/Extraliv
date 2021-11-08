@@ -38,7 +38,7 @@ class MessageController extends Controller
                     'user_id' => Auth::user()->id,
                     'client_id' => $item['user'],
                     'content' => $item['clean'] ? '' : $item['content'],
-                    'handled' => false,
+                    'handled' => $item['clean'] ? true : false,
                     'empty' => $item['clean'] ? true : false,
                 ])->id;
 
