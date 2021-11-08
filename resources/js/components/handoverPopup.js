@@ -18,7 +18,7 @@ function HandoverPopup(props) {
 	const [animateRemoval, setAnimateRemoval] = useState({ id: -1, ms: 0, timer: null });
 
 	const [clientNames, setClientNames] = useState([]);
-	const [dataMap, setDataMap] = useState([{ user: props.defaultClient, content: '', empty: false, clean: false, error: '' }, { user: null, content: '', empty: true, clean: false, error: '' }]);
+	const [dataMap, setDataMap] = useState(props.defaultClient !== undefined ? [{ user: props.defaultClient, content: '', empty: false, clean: false, error: '' }, { user: null, content: '', empty: true, clean: false, error: '' }] : [{ user: null, content: '', empty: true, clean: false, error: '' }]);
 
 	const userObject = JSON.parse(localStorage.getItem('user'));
 
