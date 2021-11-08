@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Message;
 use App\Models\MessageRead;
 use App\Models\Client;
+use App\Models\Log;
 
 class MessageController extends Controller
 {
@@ -46,6 +47,17 @@ class MessageController extends Controller
                     'user_id' => Auth::user()->id,
                     'message_id' => $newMessage,
                 ]);
+
+                Log::create([
+                    'user_id' => Auth::user()->id,
+                    'target' => 'message',
+                    'action' => 'create',
+                    'content' => $item['content'],
+                    'payload' => json_encode($item),
+                    'mini' => 'User created a new message',
+                    'short' => 'User \''.Auth::user()->name.'\' ('.Auth::user()->id.') created a new '.($item['clean'] ? 'empty ' : '').'message for client_id ('.$item['user'].')',
+                    'long' => 'User \''.Auth::user()->name.'\' ('.Auth::user()->id.') created a new '.($item['clean'] ? 'empty message for client_id ('.$item['user'].')' : 'message for client_id ('.$item['user'].') saying \''.$item['content'].'\''),
+                ]);
             }
         }
 
@@ -67,6 +79,17 @@ class MessageController extends Controller
                     'user_id' => $userId,
                     'message_id' => $id,
                 ]);
+
+                Log::create([
+                    'user_id' => Auth::user()->id,
+                    'target' => 'message',
+                    'action' => 'read',
+                    'content' => $id,
+                    'payload' => $id,
+                    'mini' => 'User read message',
+                    'short' => 'User \''.Auth::user()->name.'\' ('.Auth::user()->id.') read message_id '.$id,
+                    'long' => 'User \''.Auth::user()->name.'\' ('.Auth::user()->id.') read message_id '.$id,
+                ]);
             }
             return ['status' => 'success'];
         } else {
@@ -83,6 +106,17 @@ class MessageController extends Controller
 
                 Message::where('id', $id)->update([
                     'handled' => true
+                ]);
+
+                Log::create([
+                    'user_id' => Auth::user()->id,
+                    'target' => 'message',
+                    'action' => 'handle',
+                    'content' => $id,
+                    'payload' => $id,
+                    'mini' => 'Admin marked message as handled',
+                    'short' => 'Admin \''.Auth::user()->name.'\' ('.Auth::user()->id.') marked message_id '.$id.' as handled',
+                    'long' => 'Admin \''.Auth::user()->name.'\' ('.Auth::user()->id.') marked message_id '.$id.' as handled',
                 ]);
 
                 return ['status' => 'success'];
@@ -102,6 +136,17 @@ class MessageController extends Controller
             if (Message::where('id', $id)->exists()) {
 
                 Message::where('id', $id)->delete();
+
+                Log::create([
+                    'user_id' => Auth::user()->id,
+                    'target' => 'message',
+                    'action' => 'delete',
+                    'content' => $id,
+                    'payload' => $id,
+                    'mini' => 'Admin deleted message',
+                    'short' => 'Admin \''.Auth::user()->name.'\' ('.Auth::user()->id.') deleted message_id '.$id,
+                    'long' => 'Admin \''.Auth::user()->name.'\' ('.Auth::user()->id.') deleted message_id '.$id,
+                ]);
 
                 return ['status' => 'success'];
             } else {
