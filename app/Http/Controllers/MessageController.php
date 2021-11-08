@@ -37,8 +37,9 @@ class MessageController extends Controller
                 $newMessage = Message::create([
                     'user_id' => Auth::user()->id,
                     'client_id' => $item['user'],
-                    'content' => $item['clean'] ? 'Ok!' : $item['content'],
+                    'content' => $item['clean'] ? '' : $item['content'],
                     'handled' => false,
+                    'empty' => $item['clean'] ? true : false,
                 ])->id;
 
                 MessageRead::create([
