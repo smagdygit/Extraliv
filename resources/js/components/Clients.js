@@ -3,6 +3,10 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useHistory, withRouter } from 'react-router-dom';
 import { Button, Form, Grid, Header, Image, Message, Segment, Input, Select, Divider, Modal, Icon, Loader, Checkbox, Textarea, Dimmer } from 'semantic-ui-react';
 import { GrMail } from 'react-icons/gr';
+import { BiPlusMedical } from 'react-icons/bi';
+import { Fab, Action } from 'react-tiny-fab';
+import 'react-tiny-fab/dist/styles.css';
+import HandoverPopup from './handoverPopup';
 
 const optionsCity = [
 	{ key: 'east', value: 'east', text: 'Östra' },
@@ -19,6 +23,7 @@ const optionsCare = [
 
 function Clients() {
 	const history = useHistory();
+	const [newHandover, setNewHandover] = useState(false);
 	const [fetchedClients, setFetchedClients] = useState([]);
 	const [filteredClients, setFilteredClients] = useState([]);
 	const [filterText, setFilterText] = useState('');
@@ -147,11 +152,11 @@ function Clients() {
 			<Segment className="m-3 text-left" key={`clientResults${index}`} onClick={() => { handleClientClick(item.id) }/*setExpanded(item.id)*/}>
 				<Grid columns={2} className="ml-0 mr-0">
 					<Grid.Row>
-						<Grid.Column>
+						<Grid.Column width={12}>
 							<h3>{item.name}</h3>
 							<p>{item.east ? 'Östra' : item.lundby ? 'Lundby' : item.angered ? 'Angered' : item.vh ? 'Västra Hisingen' : item.backa ? 'Backa' : 'Vet Ej'} - {item.messages.length} {item.messages.length === 1 ? 'ny överlämning' : 'nya överlämningar'} </p>
 						</Grid.Column>
-						<Grid.Column textAlign="right">
+						<Grid.Column width={4} textAlign="right">
 							{item.messages.length > 0 &&
 								<GrMail size="3em" color="orange" />
 							}
@@ -163,9 +168,28 @@ function Clients() {
 		);
 	});
 
+	function popupCanceled() {
+		setNewHandover(false);
+	}
+
+	function popupSent() {
+		setNewHandover(false);
+		fetchClients(() => { });
+	}
 
 	return (
 		<center>
+			{!!newHandover &&
+				<HandoverPopup canceled={popupCanceled} sent={popupSent} clients={fetchedClients} />
+			}
+			{!newHandover &&
+				<Fab
+					mainButtonStyles={{ backgroundColor: 'green' }}
+					icon={<BiPlusMedical />}
+					alwaysShowTitle={true}
+					onClick={() => { setNewHandover(true) }}
+				/>
+			}
 			{!!userObject.admin &&
 				<Segment className="m-3">
 					<Dimmer active={newClientSending}>
@@ -212,6 +236,13 @@ function Clients() {
 				</Segment>
 			}
 			<Segment className="m-3">
+				<Select
+					fluid
+					placeholder='Välj stadsdel'
+					options={optionsCity}
+					onChange={(e, val) => handleCity(val.value)}
+				/>
+				<h4 className="m-3">Eller Stadsdel</h4>
 				<Input
 					fluid
 					icon='users'
@@ -220,19 +251,12 @@ function Clients() {
 					value={filterText}
 					onChange={(e) => handleText(e)}
 				/>
-				<h4 className="m-3">Eller Stadsdel</h4>
-				<Select
-					fluid
-					placeholder='Välj stadsdel'
-					options={optionsCity}
-					onChange={(e, val) => handleCity(val.value)}
-				/>
 			</Segment>
 			{resultHTML.length > 0 &&
-				<>
+				<div>
 					{resultHTML}
-					<p>{resultHTML.length} Resultat</p>
-				</>
+					<p className="mb-5 pb-5 mt-5 pt-5">{resultHTML.length} Resultat</p>
+				</div>
 			}
 			{resultHTML.length === 0 &&
 				<Segment style={{ marginTop: '15%' }} basic>
