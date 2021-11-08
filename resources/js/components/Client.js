@@ -248,10 +248,10 @@ function Clients() {
 				</Dimmer>
 				<Grid className="m-0" divided="vertically">
 					<Grid.Row className="m-0 pb-0">
-						<Grid.Column width={10} textAlign="left">
+						<Grid.Column width={9} textAlign="left">
 							<h4>{item.user.name}</h4>
 						</Grid.Column>
-						<Grid.Column width={6} textAlign="right">
+						<Grid.Column width={7} textAlign="right">
 							<h4>{new Date(item.updated_at).toLocaleDateString('sv-SE', { year: 'numeric', month: 'long', day: 'numeric' })}</h4>
 						</Grid.Column>
 					</Grid.Row>
