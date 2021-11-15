@@ -7,6 +7,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\LogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +54,8 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('users/delete', [UserController::class, 'delete']);
     Route::put('user/change-password', [UserController::class, 'changePassword']);
     Route::get('user/{id}', [UserController::class, 'get']);
+
+    Route::get('logs/', [LogController::class, 'getAll']);
 });
 
 
