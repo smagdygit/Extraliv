@@ -95,7 +95,7 @@ function Messages() {
 				<Grid className="m-0" divided="vertically">
 					<Grid.Row className="m-0 pb-0">
 						<Grid.Column width={10} textAlign="left">
-							<h4>{`${item.client.name} (${item.user.name})`}</h4>
+							<h4>{`${item.client ? item.client.name : 'error'} (${item.user.name})`}</h4>
 						</Grid.Column>
 						<Grid.Column width={6} textAlign="right">
 							<h4>{new Date(item.updated_at).toLocaleDateString('sv-SE', { year: 'numeric', month: 'long', day: 'numeric' })}</h4>

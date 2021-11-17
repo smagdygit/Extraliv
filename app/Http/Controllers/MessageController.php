@@ -34,7 +34,7 @@ class MessageController extends Controller
     public function create(Request $request)
     {
         foreach ($request->data_map as $item) {
-            if ($item['user'] != null) {
+            if (!empty($item['user'])) {
                 $newMessage = Message::create([
                     'user_id' => Auth::user()->id,
                     'client_id' => $item['user'],
@@ -52,11 +52,11 @@ class MessageController extends Controller
                     'user_id' => Auth::user()->id,
                     'target' => 'message',
                     'action' => 'create',
-                    'content' => $item['content'],
+                    'content' => $item['content'] || '',
                     'payload' => json_encode($item),
                     'mini' => 'User created a new message',
                     'short' => 'User \''.Auth::user()->name.'\' ('.Auth::user()->id.') created a new '.($item['clean'] ? 'empty ' : '').'message for client_id ('.$item['user'].')',
-                    'long' => 'User \''.Auth::user()->name.'\' ('.Auth::user()->id.') created a new '.($item['clean'] ? 'empty message for client_id ('.$item['user'].')' : 'message for client_id ('.$item['user'].') saying \''.$item['content'].'\''),
+                    'long' => 'User \''.Auth::user()->name.'\' ('.Auth::user()->id.') created a new '.($item['clean'] ? 'empty message for client_id ('.$item['user'].')' : 'message for client_id ('.$item['user'].')'.(!$item['clean'] ? 'saying \''.$item['content'].'\'' : '')),
                 ]);
             }
         }
