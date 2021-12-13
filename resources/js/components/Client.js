@@ -206,15 +206,15 @@ function Clients() {
 				if (animateRemoval.ms < 0) {
 					//const personIndex = fetchedMessages.findIndex((x) => (x.id === clientId));
 					//const newMessages = [...fetchedMessages];
-					const newMessages = {...client};
+					const newMessages = { ...client };
 					if (userObject.admin == true) newMessages.messages[client.messages.findIndex((x) => x.id === animateRemoval.id)].handled = true;
 					else newMessages.messages[client.messages.findIndex((x) => x.id === animateRemoval.id)].read = true;
 					//setfetchedMessages([...newMessages]);
 
 					//const newClient = {...client};
 					//newClient.messages = [...newMessages];
-					
-					setClient({...newMessages});
+
+					setClient({ ...newMessages });
 
 					setAnimateRemoval({ ...animateRemoval.id = -1 });
 				}
@@ -305,48 +305,49 @@ function Clients() {
 					<Button color="green" onClick={() => setNewHandover(true)}>Ny Överlämning</Button>
 				</Button.Group>
 			</Segment>
-			<Segment className="m-3">
-				<h4>Uppdatera kund</h4>
-				<Input
-					className="mb-3"
-					fluid
-					icon='address book'
-					iconPosition='left'
-					placeholder='Fullt Namn'
-					error={newClientNameError}
-					value={newClientName}
-					onChange={(e) => setNewClientName(e.target.value)}
-				/>
-				<Select
-					className="mb-3"
-					fluid
-					placeholder='Välj stadsdel'
-					error={newClientCityError}
-					options={optionsCity}
-					value={newClientCity}
-					onChange={(e, val) => setNewClientCity(val.value)}
-				/>
-				<Select
-					className="mb-3"
-					fluid
-					placeholder='Äldreomsorg / Funktionshinder'
-					error={newClientCareError}
-					options={optionsCare}
-					value={newClientCare}
-					onChange={(e, val) => setNewClientCare(val.value)}
-				/>
-				<Form>
-					<Form.TextArea
+			{!!userObject.admin &&
+				<Segment className="m-3">
+					<h4>Uppdatera kund</h4>
+					<Input
 						className="mb-3"
-						placeholder="Admin-only information relaterat till kund"
-						value={newClientComment}
-						onChange={(e) => setNewClientComment(e.target.value)}
+						fluid
+						icon='address book'
+						iconPosition='left'
+						placeholder='Fullt Namn'
+						error={newClientNameError}
+						value={newClientName}
+						onChange={(e) => setNewClientName(e.target.value)}
 					/>
-				</Form>
-				<Button disabled={!client} fluid color="green" onClick={sendNewClient}>Uppdatera kund</Button>
-				<Button className="mt-3" disabled={!client} fluid color="red" onClick={deleteClient}>Radera kund</Button>
-			</Segment>
-
+					<Select
+						className="mb-3"
+						fluid
+						placeholder='Välj stadsdel'
+						error={newClientCityError}
+						options={optionsCity}
+						value={newClientCity}
+						onChange={(e, val) => setNewClientCity(val.value)}
+					/>
+					<Select
+						className="mb-3"
+						fluid
+						placeholder='Äldreomsorg / Funktionshinder'
+						error={newClientCareError}
+						options={optionsCare}
+						value={newClientCare}
+						onChange={(e, val) => setNewClientCare(val.value)}
+					/>
+					<Form>
+						<Form.TextArea
+							className="mb-3"
+							placeholder="Admin-only information relaterat till kund"
+							value={newClientComment}
+							onChange={(e) => setNewClientComment(e.target.value)}
+						/>
+					</Form>
+					<Button disabled={!client} fluid color="green" onClick={sendNewClient}>Uppdatera kund</Button>
+					<Button className="mt-3" disabled={!client} fluid color="red" onClick={deleteClient}>Radera kund</Button>
+				</Segment>
+			}
 			<h1 className="">{client ? client.name : ''}</h1>
 
 			{client &&

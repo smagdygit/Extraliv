@@ -33,12 +33,27 @@ function HandoverPopup(props) {
 			.then(response => response.json())
 			.then(data => {
 				setFetchedClients(data);
-				setClientNames(data.map((item) => { return ({ key: item.id, text: item.name, value: item.id }) }));
+				setClientNames([{ key: -1, text: '*** Ta Bort ***', value: -1 }].concat(data.map((item) => { return ({ key: item.id, text: item.name, value: item.id }) })));
 			});
 	}, []);
 
+	// ADD EMPTY ROWS WHEN A USER HAS BEEN ADDED, AND REMOVE ROWS THAT HAS BEEN SET TO NO USER
 	useEffect(() => {
-		if (dataMap[dataMap.length - 1].user != null) setDataMap([...dataMap, ...[{ user: null, content: '', empty: true, clean: false, error: '' }]]);
+		const isModified = (dataMap[dataMap.length - 1].user != null);
+		let moddedArray = isModified ? [...dataMap, ...[{ user: null, content: '', empty: true, clean: false, error: '' }]] : undefined;
+
+		if (moddedArray === undefined) moddedArray = [...dataMap];
+
+		const foundIndex = dataMap.findIndex(x => x.user === -1);
+
+		if (foundIndex !== -1) {console.log("bean");
+			moddedArray.splice(foundIndex, 1);
+			setDataMap([...moddedArray]);
+		} else {
+			if (isModified) {console.log("machine");
+				setDataMap([...moddedArray]);
+			}
+		}
 	}, [dataMap]);
 
 	function validateHandover() {
@@ -119,6 +134,7 @@ function HandoverPopup(props) {
 										disabled={clientNames.length === 0}
 										fluid
 										selection
+										search
 										options={clientNames}
 										value={item.user}
 										onChange={(e, data) => { handleNewUser({ ...item }, index, data, item.id) }}
