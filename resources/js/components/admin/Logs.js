@@ -76,7 +76,7 @@ function Clients() {
 							<h4>{item.user_id !== -1 ? item.user.name : ''}</h4>
 						</Grid.Column>
 						<Grid.Column width={7} textAlign="right">
-							<h4>{new Date(item.updated_at).toLocaleDateString('sv-SE', { year: 'numeric', month: 'long', day: 'numeric' })}</h4>
+							<h4>{new Date(item.updated_at).toLocaleDateString('sv-SE', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' })}</h4>
 						</Grid.Column>
 					</Grid.Row>
 					<Grid.Row className="m-0 pt-5 pb-5">
