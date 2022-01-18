@@ -25,6 +25,11 @@ function Navbar() {
 			history.push(`/admin/anvandare`);
 			setActiveItem(name);
 		}
+
+		if (name === 'Loggar') {
+			history.push(`/admin/loggar`);
+			setActiveItem(name);
+		}
 	}
 
 	return (
@@ -46,7 +51,7 @@ function Navbar() {
 			</Segment>
 			{userObject && !!userObject.admin &&
 				<div className="m-3 p-0">
-					<Menu className="m-0 p-0" fluid widths={3}>
+					<Menu className="m-0 p-0" fluid widths={4}>
 						<Menu.Item
 							name='Kunder'
 							active={activeItem === 'Kunder'}
@@ -67,6 +72,13 @@ function Navbar() {
 							onClick={handleItemClick}
 						>
 							Användare
+						</Menu.Item>
+						<Menu.Item
+							name='Loggar'
+							active={activeItem === 'Loggar'}
+							onClick={handleItemClick}
+						>
+							Loggar
 						</Menu.Item>
 					</Menu>
 				</div>

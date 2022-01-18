@@ -10,6 +10,7 @@ import Client from './Client';
 import Users from './Users';
 import User from './User';
 import Messages from './Admin/Messages';
+import Logs from './Admin/Logs';
 import Navbar from './Navbar';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'semantic-ui-css/semantic.min.css';
@@ -34,6 +35,7 @@ function App() {
                         <PrivateRoute path="/admin/anvandare" component={Users} exact />
                         <PrivateRoute path="/admin/anvandare/:id" component={User} exact />
                         <PrivateRoute path="/admin/meddelanden" component={Messages} exact />
+                        <PrivateRoute path="/admin/loggar" component={Logs} exact />
                         <Route path="/byt-losenord" component={ChangePassword} exact />
                     </Switch>
                 </div>
