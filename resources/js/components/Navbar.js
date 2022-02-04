@@ -62,7 +62,7 @@ function Navbar() {
 							<Icon name="bell" size="large" />
 						</Grid.Column>
 						<Grid.Column width={12}>
-							<h3>Extraliv - {(userObject) ? userObject.name : 'Ej Inloggad'}</h3>
+							<h3>{(userObject) ? userObject.name : 'Ej Inloggad'}</h3>
 						</Grid.Column>
 						<Grid.Column width={2} textAlign="center" onClick={logout}>
 							<Icon name="log out" size="large" color="red" />

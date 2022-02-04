@@ -60,7 +60,7 @@ const Login = function () {
 		<Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
 			<Grid.Column style={{ maxWidth: 450 }}>
 				<Header as='h2' color='teal' textAlign='center'>
-					<Image src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1280px-React-icon.svg.png' /> Logga in på Intraliv
+					<Image src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1280px-React-icon.svg.png' /> Logga in på Livara Personal
 				</Header>
 				<Form size='large' loading={isLoading}>
 					<Segment stacked disabled={isLoading}>
