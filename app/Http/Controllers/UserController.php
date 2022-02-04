@@ -137,4 +137,11 @@ class UserController extends Controller
         ]);
         return ['success' => true];
     }
+
+    public function logout(Request $request)
+    {
+        $user = Auth::user()->token();
+        $user->revoke();
+        return response()->json(['status' => 'success'], 200);
+    }
 }

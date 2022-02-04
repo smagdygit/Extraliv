@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Log;
@@ -17,18 +19,18 @@ class PassportAuthController extends Controller
             'email' => 'required|email',
             'password' => 'required|min:8',
         ]);
- 
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password)
         ]);
-       
+
         $token = $user->createToken('LaravelAuthApp')->accessToken;
- 
+
         return response()->json(['token' => $token], 200);
     }
- 
+
     /**
      * Login
      */
@@ -38,7 +40,7 @@ class PassportAuthController extends Controller
             'email' => $request->email,
             'password' => $request->password
         ];
- 
+
         if (auth()->attempt($data)) {
             $token = auth()->user()->createToken('LaravelAuthApp')->accessToken;
 
@@ -49,8 +51,8 @@ class PassportAuthController extends Controller
                 'content' => $request->email,
                 'payload' => $request->email,
                 'mini' => 'User logged in',
-                'short' => 'User \''.$request->email.'\' has logged in',
-                'long' => 'User \''.$request->email.'\' has logged in',
+                'short' => 'User \'' . $request->email . '\' has logged in',
+                'long' => 'User \'' . $request->email . '\' has logged in',
             ]);
 
             return response()->json(['status' => 'success', 'token' => 'Bearer ' . $token, 'user' => auth()->user()], 200);
@@ -63,11 +65,13 @@ class PassportAuthController extends Controller
                 'content' => $request->email,
                 'payload' => $request->email,
                 'mini' => 'User logged in',
-                'short' => 'User \''.$request->email.'\' has failed to log in',
-                'long' => 'User \''.$request->email.'\' has failed to log in',
+                'short' => 'User \'' . $request->email . '\' has failed to log in',
+                'long' => 'User \'' . $request->email . '\' has failed to log in',
             ]);
 
             return response()->json(['status' => 'bad-data', 'id' => 'login-incorrect', 'text' => 'The password is wrong or the account does not exist.'], 200);
         }
-    }   
+    }
+
+
 }

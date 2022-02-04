@@ -7,6 +7,7 @@ import { BiPlusMedical } from 'react-icons/bi';
 import { Fab, Action } from 'react-tiny-fab';
 import 'react-tiny-fab/dist/styles.css';
 import HandoverPopup from './handoverPopup';
+import { check } from './LogoutCheck';
 
 const optionsCity = [
 	{ key: 'east', value: 'east', text: 'Östra' },
@@ -53,10 +54,12 @@ function Clients() {
 				'Authorization': userObject.token,
 			},
 		})
-			.then(response => response.json())
+			.then(response => {return response.ok ? response.json() : check()})
 			.then(data => {
+
 				setFetchedClients(data);
 				setFilteredClients(data);
+
 			});
 	}
 

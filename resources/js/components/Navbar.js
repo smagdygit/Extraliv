@@ -6,9 +6,14 @@ import { Button, Form, Grid, Header, Image, Message, Segment, Input, Select, Div
 function Navbar() {
 	const history = useHistory();
 	const [activeItem, setActiveItem] = useState('Kunder');
-	const userObject = JSON.parse(localStorage.getItem('user'));
+	const [userObject, setUserObject] = useState(JSON.parse(localStorage.getItem('user')));
 
 	document.body.style = 'background: #EEFBFF;';
+
+	useEffect(() => {
+		console.log("user update", userObject);
+		setUserObject(JSON.parse(localStorage.getItem('user')));
+	}, [localStorage.getItem('user')]);
 
 	function handleItemClick(e, { name }) {
 		if (name === 'Kunder') {
@@ -32,6 +37,22 @@ function Navbar() {
 		}
 	}
 
+	function logout() {
+		fetch(`/api/logout`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': userObject.token,
+			},
+		})
+			.then(res => res.json())
+			.then(data => {
+				localStorage.removeItem('user');
+				setUserObject(null);
+				history.push(`/login`);
+			})
+	}
+
 	return (
 		<center>
 			<Segment className="m-3">
@@ -43,8 +64,8 @@ function Navbar() {
 						<Grid.Column width={12}>
 							<h3>Extraliv - {(userObject) ? userObject.name : 'Ej Inloggad'}</h3>
 						</Grid.Column>
-						<Grid.Column width={2} textAlign="center">
-							<Icon name="log out" size="large" />
+						<Grid.Column width={2} textAlign="center" onClick={logout}>
+							<Icon name="log out" size="large" color="red" />
 						</Grid.Column>
 					</Grid.Row>
 				</Grid>

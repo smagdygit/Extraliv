@@ -56,6 +56,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get('user/{id}', [UserController::class, 'get']);
 
     Route::get('logs/', [LogController::class, 'getAll']);
+
+    Route::post('logout', [UserController::class, 'logout']);
 });
 
 
