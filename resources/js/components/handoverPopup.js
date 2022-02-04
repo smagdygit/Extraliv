@@ -2,6 +2,7 @@ import { indexOf } from 'lodash';
 import React, { useState, useEffect, useContext } from 'react';
 import { useHistory, withRouter, Link, useParams } from 'react-router-dom';
 import { Button, Form, Grid, Header, Image, Message, Segment, Input, Select, Icon, Loader, Dimmer, Divider, Modal, Checkbox } from 'semantic-ui-react';
+import { check } from './LogoutCheck';
 
 const optionsCity = [
 	{ key: 'east', value: 'east', text: 'Östra' },
@@ -30,7 +31,7 @@ function HandoverPopup(props) {
 				'Authorization': userObject.token,
 			},
 		})
-			.then(response => response.json())
+			.then(response => { return response.ok ? response.json() : check })
 			.then(data => {
 				setFetchedClients(data);
 				setClientNames([{ key: -1, text: '*** Ta Bort ***', value: -1 }].concat(data.map((item) => { return ({ key: item.id, text: item.name, value: item.id }) })));
@@ -46,11 +47,11 @@ function HandoverPopup(props) {
 
 		const foundIndex = dataMap.findIndex(x => x.user === -1);
 
-		if (foundIndex !== -1) {console.log("bean");
+		if (foundIndex !== -1) {
 			moddedArray.splice(foundIndex, 1);
 			setDataMap([...moddedArray]);
 		} else {
-			if (isModified) {console.log("machine");
+			if (isModified) {
 				setDataMap([...moddedArray]);
 			}
 		}
@@ -96,7 +97,7 @@ function HandoverPopup(props) {
 					data_map: dataMap,
 				}),
 			})
-				.then(response => response.json())
+				.then(response => { return response.ok ? response.json() : check })
 				.then(data => {
 					props.sent();
 				});

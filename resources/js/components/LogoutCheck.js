@@ -9,7 +9,7 @@ export const check = () => {
 	if (data.status !== 'success' && data.id === 'not-logged-in') console.log("ahahah"); else console.log("a");*/
 	
 	localStorage.removeItem('user');
-	history.push(`/login`);
+	window.location.pathname = '/login';
 
 	return(<></>);
 }

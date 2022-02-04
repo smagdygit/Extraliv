@@ -54,7 +54,7 @@ function Clients() {
 				'Authorization': userObject.token,
 			},
 		})
-			.then(response => {return response.ok ? response.json() : check()})
+			.then(response => { return response.ok ? response.json() : check })
 			.then(data => {
 
 				setFetchedClients(data);
@@ -111,7 +111,7 @@ function Clients() {
 					comment: newClientComment,
 				}),
 			})
-				.then(response => response.json())
+				.then(response => { return response.ok ? response.json() : check })
 				.then(data => {
 					setNewClientSending(false);
 					setFetchedClients([]);

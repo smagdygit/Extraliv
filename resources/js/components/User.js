@@ -2,6 +2,7 @@ import { indexOf } from 'lodash';
 import React, { useState, useEffect, useContext } from 'react';
 import { useHistory, withRouter, useParams } from 'react-router-dom'
 import { Button, Form, Grid, Header, Image, Message, Segment, Input, Select, Divider, Modal, Icon, Loader, Checkbox, Dimmer } from 'semantic-ui-react';
+import { check } from './LogoutCheck';
 
 const optionsCity = [
 	{ key: 'east', value: 'east', text: 'Östra' },
@@ -34,7 +35,7 @@ function Clients() {
 	const [newUserCityError, setNewUserCityError] = useState(false);*/
 	const [newUserSending, setNewUserSending] = useState(false);
 	const [animateRemoval, setAnimateRemoval] = useState({ id: -1, ms: 0, timer: null });
-	
+
 
 	useEffect(() => {
 		setFetchedClients([]);
@@ -50,7 +51,7 @@ function Clients() {
 				'Authorization': userObject.token,
 			},
 		})
-			.then(response => response.json())
+			.then(response => { return response.ok ? response.json() : check })
 			.then(data => {
 				setPageUser(data.user);
 				setNewUserName(data.user.name)
@@ -114,7 +115,7 @@ function Clients() {
 					comment: '',
 				}),
 			})
-				.then(response => response.json())
+				.then(response => { return response.ok ? response.json() : check })
 				.then(data => {
 					setNewUserSending(false);
 					setFetchedClients([]);
@@ -135,7 +136,7 @@ function Clients() {
 				id: pageUser.id,
 			}),
 		})
-			.then(response => response.json())
+			.then(response => { return response.ok ? response.json() : check })
 			.then(data => {
 				history.push(`/anvandare/`);
 			});

@@ -2,6 +2,7 @@ import { indexOf } from 'lodash';
 import React, { useState, useEffect, useContext } from 'react';
 import { useHistory, withRouter } from 'react-router-dom';
 import { Button, Form, Grid, Header, Image, Message, Segment, Input, Select, Divider, Modal, Icon, Loader, Checkbox, Dimmer } from 'semantic-ui-react';
+import { check } from './LogoutCheck';
 
 function Clients() {
 	const userObject = JSON.parse(localStorage.getItem('user'));
@@ -24,11 +25,11 @@ function Clients() {
 					password: newUserPass
 				}),
 			})
-				.then(response => response.json())
+				.then(response => { return response.ok ? response.json() : check })
 				.then(data => {
 					setSending(false);
 					if (data.success) {
-						const changedUser = {...userObject};
+						const changedUser = { ...userObject };
 						changedUser.force_change = false;
 						localStorage.setItem('user', JSON.stringify(changedUser));
 						history.push(`/kunder`);

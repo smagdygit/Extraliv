@@ -2,6 +2,7 @@ import { indexOf } from 'lodash';
 import React, { useState, useEffect, useContext } from 'react';
 import { useHistory, withRouter } from 'react-router-dom';
 import { Button, Form, Grid, Header, Image, Message, Segment, Input, Select, Divider, Modal, Icon, Loader, Checkbox, Dimmer } from 'semantic-ui-react';
+import { check } from './LogoutCheck';
 
 const optionsCity = [
 	{ key: 'east', value: 'east', text: 'Östra' },
@@ -47,7 +48,7 @@ function Clients() {
 				'Authorization': userObject.token,
 			},
 		})
-			.then(response => response.json())
+			.then(response => { return response.ok ? response.json() : check })
 			.then(data => {
 				setFetchedClients(data);
 				setFilteredClients(data);
@@ -108,7 +109,7 @@ function Clients() {
 					comment: '',
 				}),
 			})
-				.then(response => response.json())
+				.then(response => { return response.ok ? response.json() : check })
 				.then(data => {
 					setNewUserSending(false);
 					setFetchedClients([]);

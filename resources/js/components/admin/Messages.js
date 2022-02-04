@@ -2,6 +2,7 @@ import { indexOf } from 'lodash';
 import React, { useState, useEffect, useContext } from 'react';
 import { useHistory, withRouter, Link, useParams } from 'react-router-dom';
 import { Button, Form, Grid, Header, Image, Message, Segment, Input, Select, Icon, Loader, Dimmer, Divider, Modal, Checkbox } from 'semantic-ui-react';
+	import { check } from '../LogoutCheck';
 
 
 function Messages() {
@@ -24,7 +25,7 @@ function Messages() {
 				'Authorization': userObject.token,
 			},
 		})
-			.then(response => response.json())
+			.then(response => { return response.ok ? response.json() : check })
 			.then(data => {
 				setFetchedMessages(data);
 			});
@@ -43,7 +44,7 @@ function Messages() {
 				id: id,
 			}),
 		})
-			.then(response => response.json())
+			.then(response => { return response.ok ? response.json() : check })
 			.then(data => {
 
 			});
@@ -62,7 +63,7 @@ function Messages() {
 				id: id,
 			}),
 		})
-			.then(response => response.json())
+			.then(response => { return response.ok ? response.json() : check })
 			.then(data => {
 
 			});

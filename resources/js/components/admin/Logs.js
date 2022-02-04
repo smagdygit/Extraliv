@@ -1,12 +1,27 @@
 import { indexOf } from 'lodash';
 import React, { useState, useEffect, useContext } from 'react';
 import { useHistory, withRouter, Link, useParams } from 'react-router-dom';
-import { Button, Form, Grid, Header, Image, Message, Segment, Input, Select, Icon, Loader, Dimmer, Divider, Modal, Checkbox } from 'semantic-ui-react';
+import { Button, Form, Grid, Header, Image, Message, Segment, Input, Select, Icon, Loader, Dimmer, Divider, Modal, Checkbox, Dropdown } from 'semantic-ui-react';
+import { check } from '../LogoutCheck';
+
+const logTypeOptions = [
+	{ key: 'all', value: 'all', text: 'Allt' },
+	{ key: 'loginout', value: 'loginout', text: 'Login / Logout' },
+	{ key: 'messages', value: 'messages', text: 'Meddelanden' },
+]
+
+const loginChildren = [
+	'login_success',
+	'login_fail',
+];
 
 function Logs() {
 	const history = useHistory();
-	const [fetchedLogs, setfetchedLogs] = useState([]);
 	const userObject = JSON.parse(localStorage.getItem('user'));
+	const [fetchedLogs, setfetchedLogs] = useState([]);
+	const [filteredLogs, setFilteredLogs] = useState([]);
+	const [logType, setLogType] = useState('all');
+
 
 
 	function fetchClients(returnFunc) {
@@ -17,18 +32,34 @@ function Logs() {
 				'Authorization': userObject.token,
 			},
 		})
-			.then(response => response.json())
+			.then(response => { return response.ok ? response.json() : check })
 			.then(data => {
 
 				setfetchedLogs(data.logs);
+				runFilter(data.logs);
 
 				returnFunc();
 			});
 	}
 
+	function runFilter(logs) {
+		console.log("Filter", logType)
+
+		let moddedLogs = [...logs];
+
+		if (logType === 'loginout') moddedLogs = moddedLogs.filter(item => loginChildren.indexOf(item.action) !== -1);
+		if (logType === 'messages') moddedLogs = moddedLogs.filter(item => item.action === 'create');
+
+		setFilteredLogs([...moddedLogs]);
+	}
+
 	useEffect(() => {
 		fetchClients(() => { });
 	}, []);
+
+	useEffect(() => {
+		runFilter(fetchedLogs);
+	}, [logType])
 
 
 	function goBack() {
@@ -63,7 +94,7 @@ function Logs() {
 		)
 	}
 
-	const logsHtml = fetchedLogs.map((item, index) => messageHTML(item, index))
+	const logsHtml = filteredLogs.map((item, index) => messageHTML(item, index))
 
 	return (
 		<center>
@@ -72,13 +103,26 @@ function Logs() {
 					<Button color="red" onClick={goBack}><Icon name="long arrow alternate left" size="big" /></Button>
 				</Button.Group>
 			</Segment>
-
-			{fetchedLogs &&
+			<Segment className="m-3 p-3">
+				<Form className="mb-5">
+					<Form.Dropdown
+						name='Loggtyp'
+						label='Loggtyp'
+						placeholder='Loggtyp'
+						fluid
+						selection
+						options={logTypeOptions}
+						value={logType}
+						onChange={(e, val) => { setLogType(val.value) }}
+					/>
+				</Form>
+			</Segment>
+			{filteredLogs &&
 				<>
 					{logsHtml}
 				</>
 			}
-			{!fetchedLogs &&
+			{!filteredLogs &&
 				<Segment style={{ marginTop: '15%' }} basic>
 					<Loader active size='big'>Laddar</Loader>
 				</Segment>

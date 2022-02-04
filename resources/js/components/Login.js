@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useHistory, withRouter } from 'react-router-dom';
 import { Button, Form, Grid, Header, Image, Message, Segment } from 'semantic-ui-react';
+import { check } from './LogoutCheck';
 
 const Login = function () {
 	const [loginEmail, setLoginEmail] = useState('');
@@ -10,7 +11,7 @@ const Login = function () {
 	const [errorText, setErrorText] = useState('');
 	const [isError, setIsError] = useState(false);
 	const history = useHistory();
-	
+
 
 	function postLogin(e) {
 		setIsError(false);
@@ -25,7 +26,7 @@ const Login = function () {
 			},
 			body: JSON.stringify({ email: loginEmail, password: loginPassword })
 		})
-			.then(res => res.json())
+			.then(response => { return response.ok ? response.json() : check })
 			.then(
 				(result) => {
 					setLoadingStatus('');

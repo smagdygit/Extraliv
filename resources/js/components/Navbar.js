@@ -2,6 +2,7 @@ import React, { useState, useContext, useMemo, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, Switch, Link, useParams, useHistory } from 'react-router-dom';
 import { Button, Form, Grid, Header, Image, Message, Segment, Input, Select, Divider, Modal, Icon, Menu } from 'semantic-ui-react';
+import { check } from './LogoutCheck';
 
 function Navbar() {
 	const history = useHistory();
@@ -11,7 +12,7 @@ function Navbar() {
 	document.body.style = 'background: #EEFBFF;';
 
 	useEffect(() => {
-		console.log("user update", userObject);
+		//console.log("user update", userObject);
 		setUserObject(JSON.parse(localStorage.getItem('user')));
 	}, [localStorage.getItem('user')]);
 
@@ -45,7 +46,7 @@ function Navbar() {
 				'Authorization': userObject.token,
 			},
 		})
-			.then(res => res.json())
+		.then(response => {return response.ok ? response.json() : check})
 			.then(data => {
 				localStorage.removeItem('user');
 				setUserObject(null);

@@ -3,6 +3,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useHistory, withRouter, Link, useParams } from 'react-router-dom';
 import { Button, Form, Grid, Header, Image, Message, Segment, Input, Select, Icon, Loader, Dimmer, Divider, Modal, Checkbox } from 'semantic-ui-react';
 import HandoverPopup from './handoverPopup';
+import { check } from './LogoutCheck';
 
 const optionsCity = [
 	{ key: 'east', value: 'east', text: 'Östra' },
@@ -42,7 +43,7 @@ function Clients() {
 				'Authorization': userObject.token,
 			},
 		})
-			.then(response => response.json())
+			.then(response => { return response.ok ? response.json() : check })
 			.then(data => {
 				setClient(data.client);
 
@@ -106,7 +107,7 @@ function Clients() {
 					comment: newClientComment,
 				}),
 			})
-				.then(response => response.json())
+				.then(response => { return response.ok ? response.json() : check })
 				.then(data => {
 					setNewClientSending(false);
 					setFetchedClients([]);
@@ -127,7 +128,7 @@ function Clients() {
 				id: client.id,
 			}),
 		})
-			.then(response => response.json())
+			.then(response => { return response.ok ? response.json() : check })
 			.then(data => {
 				history.push(`/kunder/`);
 			});
@@ -152,7 +153,7 @@ function Clients() {
 				read: true,
 			}),
 		})
-			.then(response => response.json())
+			.then(response => { return response.ok ? response.json() : check })
 			.then(data => {
 
 			});
@@ -171,7 +172,7 @@ function Clients() {
 				id: id,
 			}),
 		})
-			.then(response => response.json())
+			.then(response => { return response.ok ? response.json() : check })
 			.then(data => {
 
 			});
@@ -190,7 +191,7 @@ function Clients() {
 				id: id,
 			}),
 		})
-			.then(response => response.json())
+			.then(response => { return response.ok ? response.json() : check })
 			.then(data => {
 
 			});
