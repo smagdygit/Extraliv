@@ -49,8 +49,6 @@ function Logs() {
 	}
 
 	function runFilter(logs) {
-		console.log("Filter", logType)
-
 		let moddedLogs = [...logs];
 
 		if (logType === 'loginout') moddedLogs = moddedLogs.filter(item => loginChildren.indexOf(item.action) !== -1);
@@ -106,7 +104,7 @@ function Logs() {
 			text += item.long;
 
 			return (
-				<div className="ml-4 mb-2 text-left">
+				<div className="ml-4 mb-2 text-left" key={'message' + index}>
 					{text}
 				</div>
 			)

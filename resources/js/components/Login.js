@@ -58,10 +58,10 @@ const Login = function () {
 	}
 
 	return (
-		<Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
+		<Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle' className="m-0 p-0">
 			<Grid.Column style={{ maxWidth: 450 }}>
 				<Header as='h2' color='teal' textAlign='center'>
-					<Image src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1280px-React-icon.svg.png' /> Logga in på Livara Personal
+					<Image src='/images/tree.png' />Livara Personal
 				</Header>
 				<Form size='large' loading={isLoading}>
 					<Segment stacked disabled={isLoading}>
