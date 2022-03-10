@@ -91,7 +91,7 @@ class MessageController extends Controller
                     'long' => 'User \''.Auth::user()->name.'\' ('.Auth::user()->id.') read message_id '.$id,
                 ]);
             }
-            return ['status' => 'success'];
+            return ['status' => 'success', 'was_read' => $wasRead, 'user' => $userId, 'message' => $id];
         } else {
             return ['status' => 'error', 'text' => 'Meddelandet finns ej'];
         }

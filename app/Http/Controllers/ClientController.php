@@ -31,9 +31,18 @@ class ClientController extends Controller
             foreach ($client->messages as $message) {
                 $message->read = false;
                 foreach ($message->readBy as $readBy) {
-                    $message->read = ($readBy->id === Auth::user()->id);
+                    if ($readBy->id === Auth::user()->id) $message->read = true;
+                    //var_dump($message->read);
                 }
             }
+
+            /*for ($i = 0; $i < count($client->messages); $i++) {
+                $client->messages[$i]->read = false;
+                foreach ($message->readBy as $readBy) {
+                    $client->messages[$i]->read = ($readBy->id === Auth::user()->id);
+                    //var_dump($message->read);
+                }
+            }*/
 
             return ['status' => 'success', 'client' => $client];
         } else {

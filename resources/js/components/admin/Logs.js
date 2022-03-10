@@ -27,6 +27,8 @@ function Logs() {
 	const [filteredLogs, setFilteredLogs] = useState([]);
 	const [logType, setLogType] = useState('all');
 	const [displayType, setDisplayType] = useState('basic_small');
+	const [userOptions, setUserOptions] = useState([]);
+	const [selectedUser, setSelectedUser] = useState(-1);
 
 
 
@@ -41,8 +43,14 @@ function Logs() {
 			.then(response => { return response.ok ? response.json() : check })
 			.then(data => {
 
+				//Set logs and run filter
 				setfetchedLogs(data.logs);
 				runFilter(data.logs);
+
+				//Set users based on logs
+				const newUsersPure = data.logs.flatMap(x => { if (x.user !== null) return { name: x.user.name, email: x.user.email, id: x.user.id }; else return [] });
+				const newUsersFiltered = newUsersPure.filter(({ id }, index) => !newUsersPure.map(y => y.id).includes(id, index + 1));
+				setUserOptions([{ key: -1, value: -1, text: 'Alla', email: '' }].concat(newUsersFiltered.map(x => { return ({ key: x.id, value: x.id, text: x.name, email: x.email }) })));
 
 				returnFunc();
 			});
@@ -53,6 +61,7 @@ function Logs() {
 
 		if (logType === 'loginout') moddedLogs = moddedLogs.filter(item => loginChildren.indexOf(item.action) !== -1);
 		if (logType === 'messages') moddedLogs = moddedLogs.filter(item => item.action === 'create');
+		if (selectedUser !== -1) moddedLogs = moddedLogs.filter(item => item.user !== null && item.user.id === selectedUser);
 
 		setFilteredLogs([...moddedLogs]);
 	}
@@ -63,7 +72,7 @@ function Logs() {
 
 	useEffect(() => {
 		runFilter(fetchedLogs);
-	}, [logType])
+	}, [logType, selectedUser])
 
 
 	function goBack() {
@@ -142,6 +151,16 @@ function Logs() {
 							options={displayTypeOptions}
 							value={displayType}
 							onChange={(e, val) => { setDisplayType(val.value) }}
+						/>
+						<Form.Dropdown
+							name='User'
+							label='Användare'
+							placeholder='Användare'
+							fluid
+							selection
+							options={userOptions}
+							value={selectedUser}
+							onChange={(e, val) => { setSelectedUser(val.value) }}
 						/>
 					</Form.Group>
 				</Form>
