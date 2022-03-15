@@ -13,7 +13,7 @@ function Clients() {
 
 	function sendNewPassword() {
 		setError('');
-		if (newUserPass.length >= 16) {
+		if (newUserPass.length >= 12) {
 			setSending(true);
 			fetch('/api/user/change-password', {
 				method: 'PUT',
@@ -56,7 +56,7 @@ function Clients() {
 					<p>aaaabbbbcccc<br />1234...</p>
 					<h4 className="text-success">Bra:</h4>
 					<p>AllaBananerHeterPetrus<br />JagÄlskarAttStädaHosPeterPan<br /><br />(Dessa är endast exempel, välj inte dessa exakta lösenord)</p>
-					<h4 className={newUserPass.length < 16 ? "text-danger" : "text-success"}>{newUserPass.length} / 16{error}</h4>
+					<h4 className={newUserPass.length < 12 ? "text-danger" : "text-success"}>{newUserPass.length} / 12{error}</h4>
 					<Input
 						type='password'
 						className="mb-3"
