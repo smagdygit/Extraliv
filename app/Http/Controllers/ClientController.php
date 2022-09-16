@@ -45,7 +45,7 @@ class ClientController extends Controller
     public function getAll()
     {
         $clientList = array();
-        foreach (Client::orderBy('name', 'asc')->get() as $clientItem) {
+        foreach (Client::orderBy('name', 'asc')->where('hidden', false)->get() as $clientItem) {
 
             /* Convert '1' to 1, vice versa */
             $clientItem->east = $clientItem->east === '1' ? 1 : 0;
@@ -145,7 +145,10 @@ class ClientController extends Controller
         $personId = $request->id;
         if (Client::where('id', $personId)->exists()) {
             $personToDelete = Client::where('id', $personId)->first();
-            $personToDelete->delete();
+            //$personToDelete->delete();
+            $personToDelete->update([
+                'hidden' => true
+            ]);
             return ['status' => 'success', 'clients' => $this->getAll()];
         } else {
             return ['status' => 'not-found', 'field' => 'id', 'id' => 'id-not-found', 'text' => 'Det finns ingen brukare registrerad med detta id'];

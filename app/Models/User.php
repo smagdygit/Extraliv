@@ -32,6 +32,7 @@ class User extends Authenticatable
         'backa',
         'comment',
         'force_change',
+        'hidden',
     ];
 
     /**

@@ -38,7 +38,7 @@ class UserController extends Controller
     public function getAll()
     {
         $userList = array();
-        foreach (User::orderBy('name', 'asc')->get() as $userItem) {
+        foreach (User::orderBy('name', 'asc')->where('hidden', false)->get() as $userItem) {
             $userItem->messages;
             foreach ($userItem->messages as $message) {
                 $message->client;
@@ -120,7 +120,10 @@ class UserController extends Controller
             $phoneId = $request->id;
             if (User::where('id', $phoneId)->exists()) {
                 $phoneToDelete = User::where('id', $phoneId)->first();
-                $phoneToDelete->delete();
+                //$phoneToDelete->delete();
+                $phoneToDelete->update([
+                    'hidden' => true
+                ]);
                 return ['status' => 'success', 'users' => $this->getAll()];
             } else {
                 return ['status' => 'not-found', 'field' => 'id', 'id' => 'id-not-found', 'text' => 'Det finns ingen användare registrerad med detta id'];

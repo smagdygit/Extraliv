@@ -19,6 +19,7 @@ class Client extends Model
         'vh',
         'backa',
         'comment',
+        'hidden',
     ];
 
     public function messages()
