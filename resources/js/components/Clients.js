@@ -263,6 +263,15 @@ function Clients() {
 					onChange={(e) => handleText(e)}
 				/>
 			</Segment>
+			<Segment className="m-3 p-0">
+				<Button
+					color="green"
+					content="Ny Överlämning"
+					className="m-0"
+					fluid
+					onClick={() => { setNewHandover(true) }}
+				/>
+			</Segment>
 			{resultHTML.length > 0 &&
 				<div>
 					{resultHTML}
